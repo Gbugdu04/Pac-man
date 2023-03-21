@@ -53,3 +53,9 @@ class pacman:
         pass
     def coin_eaten(self):
         pass
+
+class Interface:
+
+    
+labyrinthe_test = dict()
+labyrinthe_test[(0,0)] = [(False, True), (False, True)]
