@@ -15,7 +15,7 @@ class labyrinth:
 
 
 
-class pacman:
+class perso :
 
     def __init__(self):
         pass
