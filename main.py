@@ -35,7 +35,7 @@ class pacman:
         pass
     def update_path(self):
         pass
-    def kill_pac(self):
+    def kill_pac(self);
         pass
     def pac_dead(self):
         pass
