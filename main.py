@@ -16,6 +16,7 @@ class labyrinth:
 
 
 class pacman:
+
     def __init__(self):
         pass
     def load_images(self):
@@ -40,4 +41,15 @@ class pacman:
         pass
     def move_pac(self):
         pass
-    
+    def kill_enemy(self):
+        pass
+    def enemy_dead(self):
+        pass
+    def quit_game(self):
+        pass
+    def put_coins(self):
+        pass
+    def eat_coins(self):
+        pass
+    def coin_eaten(self):
+        pass
