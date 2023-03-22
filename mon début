@@ -61,11 +61,15 @@ class labyrinthe(tk.Canvas):
         self.load_assets()
         self.create_labyrinthe()
         self.create_adjacency()
-        # print(self.adj)
+        self.draw_path()
+        # self.create_image(20*7,20*1,image=self.wall2_body,tag='wall2')
     def load_assets(self):
         self.wall_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall.png")
+        
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
         
+        self.wall2_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall2.png")
+        self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
     def create_labyrinthe(self):
         for i,j in self.list_of_coordinates:
@@ -99,7 +103,7 @@ class labyrinthe(tk.Canvas):
                     if j+1<self.col:   
                         if self.matrix[i][j+1]==1:
                             self.adj[(i,j)].append((i,j+1))
-
+        # print(self.adj)
     
     def BFS(self, depart, arrivee):
        a_explorer = [depart]
@@ -119,10 +123,14 @@ class labyrinthe(tk.Canvas):
                        deja_collectes.append(sommet)
                        self.chemins[sommet] = self.chemins[courant] + [sommet]
        return None
-
-
-
     
+    
+    
+
+    def draw_path(self):
+        for pos in self.BFS((1,2),(29,25)):
+            self.create_image(20*pos[1],20*pos[0],image=self.wall2_body,tag='wall2')
+        
 root.title("pacman with Tkinter")
 root.resizable(False,False) 
 board=labyrinthe()
