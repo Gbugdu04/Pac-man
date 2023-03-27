@@ -96,17 +96,17 @@ class labyrinthe(tk.Canvas):
         
         
     def load_assets(self):
-        self.wall_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall.png")
+        self.wall_image=Image.open("pixel_art//wall.png")
         
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
         
-        self.wall2_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall2.png")
+        self.wall2_image=Image.open("pixel_art//wall2.png")
         self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
-        self.pac_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacmanr.png")
+        self.pac_image=Image.open("pixel_art//pacmanr.png")
         self.pac_body=ImageTk.PhotoImage(self.pac_image)
         
-        self.enemy_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//enemy1.png")
+        self.enemy_image=Image.open("pixel_art//enemy1.png")
         self.enemy_body=ImageTk.PhotoImage(self.enemy_image)
     def create_labyrinthe(self):
         for i,j in self.list_of_coordinates:

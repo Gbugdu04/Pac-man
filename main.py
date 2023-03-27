@@ -55,7 +55,9 @@ class perso :
         pass
 
 class Interface:
+    def __init__():
 
+        return
     
 labyrinthe_test = dict()
 labyrinthe_test[(0,0)] = [(False, True), (False, True)]
