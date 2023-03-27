@@ -96,6 +96,7 @@ class labyrinthe(tk.Canvas):
         
         
     def load_assets(self):
+        #fonction qui charge les images utilisées dans l'interface graphique
         self.wall_image=Image.open("pixel_art//wall.png")
         
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
@@ -103,7 +104,7 @@ class labyrinthe(tk.Canvas):
         self.wall2_image=Image.open("pixel_art//wall2.png")
         self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
-        self.pac_image=Image.open("pixel_art//pacmanr.png")
+        self.pac_image=Image.open("pixel_art//pacman.png")
         self.pac_body=ImageTk.PhotoImage(self.pac_image)
         
         self.enemy_image=Image.open("pixel_art//enemy1.png")
@@ -118,6 +119,7 @@ class labyrinthe(tk.Canvas):
             
      
     def create_adjacency(self):
+        # fonction qui crée un dictionnaire avec les adjacences de chaque case
         self.adj={}
         
         self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
@@ -143,6 +145,7 @@ class labyrinthe(tk.Canvas):
         # print(self.adj)
     
     def BFS(self, depart, arrivee):
+       #fonction de parcours de graphe qui determine le chemin le plus court entre le pacman et un ennemi
        a_explorer = [depart]
        deja_collectes = [depart]
        self.chemins = {depart: [depart]}
@@ -162,14 +165,17 @@ class labyrinthe(tk.Canvas):
        return None
    
     def draw_path(self):
+        #dessine le plus court chemin
         for pos in self.BFS((1,2),(29,25)):
             self.create_image(20*pos[1],20*pos[0],image=self.wall2_body,tag='wall2')
         
         
     def create_pacr(self):
+        #crée le pacman
         self.create_image(*self.pac_pos,image=self.pac_body,tag='pacman')
     
     def move_pac(self):
+        #fonction qui deplace le pacman 
         x_pos=self.pac_pos[0]
         y_pos=self.pac_pos[1]
         
@@ -189,10 +195,13 @@ class labyrinthe(tk.Canvas):
         self.pac_pos=(x_pos,y_pos)
         
         self.coords('pacman',self.pac_pos)
+
     def on_key_release(self,event):
+        #stop le pacman si on relache les fleches directrices
         self.MOVE_INCREMENT=0
          
     def on_key_press(self,event):
+        #prend les commandes de direction du joueur
         self.MOVE_INCREMENT=20
         new_order=event.keysym
         all_directions=["Right","Up","Left","Down"]
@@ -200,6 +209,7 @@ class labyrinthe(tk.Canvas):
             self.direction=new_order
         
     def perform_actions1(self):
+        #boucle de mouvement
         self.move_pac()
         
        
@@ -209,9 +219,11 @@ class labyrinthe(tk.Canvas):
         # print(self.adj[(self.pac_pos[0]//20,self.pac_pos[1]//20)])
         
     def create_enemy(self):
+        #creer les ennemis
         self.create_image(*self.enemy_pos,image=self.enemy_body,tag='enemy')
         
     def follow_pac(self):
+        #suis le pacman si ce dernier apparais dans un certain rayon
         L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20))
         
         if len(L)<15:
@@ -224,6 +236,7 @@ class labyrinthe(tk.Canvas):
     
         
     def move_randomly(self):
+        #se deplace aléatoirment sans revenir sur ses pas
         L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20))
         if L:
             
