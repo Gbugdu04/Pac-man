@@ -3,11 +3,10 @@ import tkinter as tk
 from PIL import Image,ImageTk
 import json
 import random
-#coucou
 root=tk.Tk()
 
 
-class labyrinthe(tk.Canvas):
+class Labyrinth(tk.Canvas):
     def __init__(self):
         super().__init__(width=550,height=610,background='black',highlightthickness=0)
         
@@ -261,7 +260,7 @@ class labyrinthe(tk.Canvas):
         
 root.title("pacman with Tkinter")
 root.resizable(False,False) 
-board=labyrinthe()
+board=Labyrinth()
 board.pack()
 
 root.mainloop()
