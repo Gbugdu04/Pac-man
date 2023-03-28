@@ -3,122 +3,56 @@ import tkinter as tk
 from PIL import Image,ImageTk
 import json
 import random
+
 root=tk.Tk()
-
-
-class Labyrinth(tk.Canvas):
-    def __init__(self):
-        super().__init__(width=550,height=610,background='black',highlightthickness=0)
-        
-        self.w=560
-        self.h=620
-        self.pac_pos=(40,20)
-        self.direction="Right"
-        # self.last=[40,20]
-        self.MOVE_INCREMENT=0
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
+ascii_maze=[                   
+            "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "X            XX            X",
+            "X XXXX XXXXX XX XXXXX XXXX X",
+            "X XXXX XXXXX XX XXXXX XXXX X",
+            "X XXXX XXXXX XX XXXXX XXXX X",
+            "X                          X",
+            "X XXXX XX XXXXXXXX XX XXXX X",
+            "X XXXX XX XXXXXXXX XX XXXX X",
+            "X      XX    XX    XX      X",
+            "XXXXXX XXXXX XX XXXXX XXXXXX",
+            "XXXXXX XXXXX XX XXXXX XXXXXX",
+            "XXXXXX XX          XX XXXXXX",
+            "XXXXXX XX XXXXXXXX XX XXXXXX",
+            "XXXXXX XX XXXXXXXX XX XXXXXX",
+            "          XXXXXXXX          ",
+            "XXXXXX XX XXXXXXXX XX XXXXXX",
+            "XXXXXX XX XXXXXXXX XX XXXXXX",
+            "XXXXXX XX          XX XXXXXX",
+            "XXXXXX XX XXXXXXXX XX XXXXXX",
+            "XXXXXX XX XXXXXXXX XX XXXXXX",
+            "X            XX            X",
+            "X XXXX XXXXX XX XXXXX XXXX X",
+            "X XXXX XXXXX XX XXXXX XXXX X",
+            "X   XX                XX   X",
+            "XXX XX XX XXXXXXXX XX XX XXX",
+            "XXX XX XX XXXXXXXX XX XX XXX",
+            "X      XX    XX    XX      X",
+            "X XXXXXXXXXX XX XXXXXXXXXX X",
+            "X XXXXXXXXXX XX XXXXXXXXXX X",
+            "X                          X",
+            "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+        ]
+class main_menu():
+    def __init__(self,ascii_maze):
         
-        self.ascii_maze=[                   
-                    "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                    "X            XX            X",
-                    "X XXXX XXXXX XX XXXXX XXXX X",
-                    "X XXXX XXXXX XX XXXXX XXXX X",
-                    "X XXXX XXXXX XX XXXXX XXXX X",
-                    "X                          X",
-                    "X XXXX XX XXXXXXXX XX XXXX X",
-                    "X XXXX XX XXXXXXXX XX XXXX X",
-                    "X      XX    XX    XX      X",
-                    "XXXXXX XXXXX XX XXXXX XXXXXX",
-                    "XXXXXX XXXXX XX XXXXX XXXXXX",
-                    "XXXXXX XX          XX XXXXXX",
-                    "XXXXXX XX XXXXXXXX XX XXXXXX",
-                    "XXXXXX XX XXXXXXXX XX XXXXXX",
-                    "          XXXXXXXX          ",
-                    "XXXXXX XX XXXXXXXX XX XXXXXX",
-                    "XXXXXX XX XXXXXXXX XX XXXXXX",
-                    "XXXXXX XX          XX XXXXXX",
-                    "XXXXXX XX XXXXXXXX XX XXXXXX",
-                    "XXXXXX XX XXXXXXXX XX XXXXXX",
-                    "X            XX            X",
-                    "X XXXX XXXXX XX XXXXX XXXX X",
-                    "X XXXX XXXXX XX XXXXX XXXX X",
-                    "X   XX                XX   X",
-                    "XXX XX XX XXXXXXXX XX XX XXX",
-                    "XXX XX XX XXXXXXXX XX XX XXX",
-                    "X      XX    XX    XX      X",
-                    "X XXXXXXXXXX XX XXXXXXXXXX X",
-                    "X XXXXXXXXXX XX XXXXXXXXXX X",
-                    "X                          X",
-                    "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                ]
-        
-        self.enemy_pos=(500,580)
-        
-        
+        self.ascii_maze=ascii_maze
         self.col=len(list(self.ascii_maze[0]))
         self.line=len(list(self.ascii_maze))
         self.matrix=np.zeros((self.line,self.col))
-        
-        
-        
-        
         for i in range(self.line):
             for j in range(self.col):
                 if self.ascii_maze[i][j]==" ":
                     self.matrix[i][j]=1
-                    
-                    
-                    
-        self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
-        self.load_assets()
-        self.create_labyrinthe()
         self.create_adjacency()
-        self.B=self.adj[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)]
-        self.create_pacr()
-        self.bind_all("<Key>",self.on_key_press)
-        self.bind_all("<KeyRelease>",self.on_key_release)
-        self.perform_actions1()
-        self.create_enemy()
-        self.follow_pac()
-        self.move_randomly()
-        # self.follow_path()
-        # self.draw_path()   #####FONCTION POUR TESTER LE PARCOUR DE GRAPHE
-        # self.create_image(20*7,20*1,image=self.wall2_body,tag='wall2')
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-    def load_assets(self):
-        #fonction qui charge les images utilisées dans l'interface graphique
-        self.wall_image=Image.open("pixel_art//wall.png")
-        
-        self.wall_body=ImageTk.PhotoImage(self.wall_image)
-        
-        self.wall2_image=Image.open("pixel_art//wall2.png")
-        self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
-        
-        self.pac_image=Image.open("pixel_art//pacman.png")
-        self.pac_body=ImageTk.PhotoImage(self.pac_image)
-        
-        self.enemy_image=Image.open("pixel_art//enemy1.png")
-        self.enemy_body=ImageTk.PhotoImage(self.enemy_image)
-    def create_labyrinthe(self):
-        for i,j in self.list_of_coordinates:
-            if j//20<31 and i//20 <28:
-                if self.matrix[j//20,i//20]==0:
-                    self.create_image(i,j,image=self.wall_body,tag='wall')
-            # else:
-            #     print(i//20,j//20)
-            
-     
+    
     def create_adjacency(self):
-        # fonction qui crée un dictionnaire avec les adjacences de chaque case
         self.adj={}
         
         self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
@@ -141,10 +75,74 @@ class Labyrinth(tk.Canvas):
                     if j+1<self.col:   
                         if self.matrix[i][j+1]==1:
                             self.adj[(i,j)].append((i,j+1))
-        # print(self.adj)
+                            
+                            
+MENU=main_menu(ascii_maze)
+adj=MENU.adj
+
+class labyrinthe(tk.Canvas):
+    def __init__(self):
+        super().__init__(width=550,height=610,background='black',highlightthickness=0)
+        
+        self.w=560
+        self.h=620
+        self.pac_pos=(40,20)
+        self.direction="Right"
+        self.MOVE_INCREMENT=0
+      
+        self.enemy_pos=(500,580)
+        self.previous_enemy_pos = self.enemy_pos 
+        
+        self.col=len(list(ascii_maze[0]))
+        self.line=len(list(ascii_maze))
+        self.matrix=np.zeros((self.line,self.col))
+        
+        
+        
+        
+        for i in range(self.line):
+            for j in range(self.col):
+                if ascii_maze[i][j]==" ":
+                    self.matrix[i][j]=1
+                    
+                    
+                    
+        self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
+        self.load_assets()
+        self.create_labyrinthe()
+        
+        self.B=adj[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)]
+        self.create_pacr()
+        self.bind_all("<Key>",self.on_key_press)
+        self.bind_all("<KeyRelease>",self.on_key_release)
+        self.perform_actions1()
+        self.create_enemy()
+        # self.follow_pac()
+        self.move_randomly_or_follow()
+        # self.draw_path()   #####FONCTION POUR TESTER LE PARCOUR DE GRAPHE
+        
+        
+    def load_assets(self):
+        self.wall_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall.png")
+        
+        self.wall_body=ImageTk.PhotoImage(self.wall_image)
+        
+        self.wall2_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall2.png")
+        self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
+        
+        self.pac_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacmanr.png")
+        self.pac_body=ImageTk.PhotoImage(self.pac_image)
+        
+        self.enemy_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//enemy1.png")
+        self.enemy_body=ImageTk.PhotoImage(self.enemy_image)
+    def create_labyrinthe(self):
+        for i,j in self.list_of_coordinates:
+            if j//20<31 and i//20 <28:
+                if self.matrix[j//20,i//20]==0:
+                    self.create_image(i,j,image=self.wall_body,tag='wall')
+            
     
-    def BFS(self, depart, arrivee):
-       #fonction de parcours de graphe qui determine le chemin le plus court entre le pacman et un ennemi
+    def BFS(self,depart, arrivee,adj):
        a_explorer = [depart]
        deja_collectes = [depart]
        self.chemins = {depart: [depart]}
@@ -155,8 +153,8 @@ class Labyrinth(tk.Canvas):
            if courant == arrivee:
                return self.chemins[arrivee]
 
-           if courant in self.adj:
-               for sommet in self.adj[courant]:
+           if courant in adj:
+               for sommet in adj[courant]:
                    if sommet not in deja_collectes:
                        a_explorer.append(sommet)
                        deja_collectes.append(sommet)
@@ -164,43 +162,37 @@ class Labyrinth(tk.Canvas):
        return None
    
     def draw_path(self):
-        #dessine le plus court chemin
         for pos in self.BFS((1,2),(29,25)):
             self.create_image(20*pos[1],20*pos[0],image=self.wall2_body,tag='wall2')
         
         
     def create_pacr(self):
-        #crée le pacman
         self.create_image(*self.pac_pos,image=self.pac_body,tag='pacman')
     
     def move_pac(self):
-        #fonction qui deplace le pacman 
         x_pos=self.pac_pos[0]
         y_pos=self.pac_pos[1]
         
         if self.direction=='Right':
-            if (y_pos//20,(x_pos//20)+1) in self.adj[(y_pos//20,x_pos//20)]:
+            if (y_pos//20,(x_pos//20)+1) in adj[(y_pos//20,x_pos//20)]:
                  x_pos=x_pos+self.MOVE_INCREMENT
         if self.direction=='Up':
-            if (y_pos//20 -1,(x_pos//20)) in self.adj[(y_pos//20,x_pos//20)]:
+            if (y_pos//20 -1,(x_pos//20)) in adj[(y_pos//20,x_pos//20)]:
                  y_pos=y_pos-self.MOVE_INCREMENT
         if self.direction=="Down":
-            if (y_pos//20 +1,(x_pos//20)) in self.adj[(y_pos//20,x_pos//20)]:
+            if (y_pos//20 +1,(x_pos//20)) in adj[(y_pos//20,x_pos//20)]:
                 y_pos=y_pos+self.MOVE_INCREMENT
         if self.direction=='Left':
-            if (y_pos//20 ,(x_pos//20)-1) in self.adj[(y_pos//20,x_pos//20)]:
+            if (y_pos//20 ,(x_pos//20)-1) in adj[(y_pos//20,x_pos//20)]:
                 x_pos=x_pos-self.MOVE_INCREMENT
         
         self.pac_pos=(x_pos,y_pos)
         
         self.coords('pacman',self.pac_pos)
-
     def on_key_release(self,event):
-        #stop le pacman si on relache les fleches directrices
         self.MOVE_INCREMENT=0
          
     def on_key_press(self,event):
-        #prend les commandes de direction du joueur
         self.MOVE_INCREMENT=20
         new_order=event.keysym
         all_directions=["Right","Up","Left","Down"]
@@ -208,59 +200,43 @@ class Labyrinth(tk.Canvas):
             self.direction=new_order
         
     def perform_actions1(self):
-        #boucle de mouvement
         self.move_pac()
         
-       
-        
         self.after(80, self.perform_actions1)
-        # print(self.pac_pos[0]//20,self.pac_pos[1]//20)
-        # print(self.adj[(self.pac_pos[0]//20,self.pac_pos[1]//20)])
         
     def create_enemy(self):
-        #creer les ennemis
         self.create_image(*self.enemy_pos,image=self.enemy_body,tag='enemy')
         
-    def follow_pac(self):
-        #suis le pacman si ce dernier apparais dans un certain rayon
-        L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20))
-        
-        if len(L)<15:
-            self.enemy_pos=(L[1][1]*20,L[1][0]*20)
-            self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
-        # self.create_image(*self.enemy_pos,image=self.wall2_body,tag='wall2')
-            L.pop(0)
-        
-        self.after(140,self.follow_pac)
+    # def follow_pac(self):
+    #     L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20))
+    #     if L:
+    #      if len(L)<15:
+    #         self.enemy_pos=(L[1][1]*20,L[1][0]*20)
+    #         self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
+    #         L.pop(0)
+    #     self.after(140,self.follow_pac)
     
         
-    def move_randomly(self):
-        #se deplace aléatoirment sans revenir sur ses pas
-        L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20))
+    def move_randomly_or_follow(self):
+        L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj)
         if L:
-            
-         if len(L)>=15:
+         if len(L)<15:
+            self.enemy_pos=(L[1][1]*20,L[1][0]*20)
+            self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
+            L.pop(0)   
+         else:
             a,b=random.choice(self.B)
             self.coords('enemy',b*20,a*20)
-            self.B=self.adj[(a,b)]
-            # self.B.remove((self.enemy_pos[1]//20,self.enemy_pos[0]//20))
+            self.B=adj[(a,b)]
             if (self.enemy_pos[1]//20,self.enemy_pos[0]//20) in self.B:
                 self.B.remove((self.enemy_pos[1]//20,self.enemy_pos[0]//20))
-
             self.enemy_pos=(b*20,a*20)
-            # print(self.B,(a,b))
-            # print(self.adj[(20,8)])
-            
-        self.after(140,self.move_randomly)
-            
-        
-        
-        
-        
-        
+        self.after(140,self.move_randomly_or_follow)
+     
+         
 root.title("pacman with Tkinter")
 root.resizable(False,False) 
-board=Labyrinth()
+board=labyrinthe()
 board.pack()
 
 root.mainloop()
