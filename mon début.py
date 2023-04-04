@@ -42,21 +42,22 @@ ascii_maze=[
 class main_menu():
     def __init__(self,ascii_maze):
         
-        self.ascii_maze=ascii_maze
-        self.col=len(list(self.ascii_maze[0]))
-        self.line=len(list(self.ascii_maze))
-        self.matrix=np.zeros((self.line,self.col))
-        for i in range(self.line):
+        self.ascii_maze=ascii_maze # tableau avec les X comme mur et les espaces comme passage 
+        self.col=len(list(self.ascii_maze[0])) # longueur des lignes
+        self.line=len(list(self.ascii_maze)) # longueur des colones 
+        self.matrix=np.zeros((self.line,self.col)) # initialisation d'un tableau de même taille avec des zeros
+        for i in range(self.line):  # remplie le tableau de 1 pour les passages
             for j in range(self.col):
                 if self.ascii_maze[i][j]==" ":
                     self.matrix[i][j]=1
         self.create_adjacency()
     
-    def create_adjacency(self):
+    def create_adjacency(self): 
+        # creer le dictionnaire contenant les adjacences
         self.adj={}
         
-        self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
-        self.adj[(14,0)]=[(14,self.col-1),(14,1)]
+        #self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
+        #self.adj[(14,0)]=[(14,self.col-1),(14,1)]
         
         for i in range(1,self.line):
             for j in range(1,self.col):
@@ -78,22 +79,23 @@ class main_menu():
                             
                             
 MENU=main_menu(ascii_maze)
-adj=MENU.adj
+adj=MENU.adj # le dictionnaire d'adjacence devient une variable globale
 
 class labyrinthe(tk.Canvas):
     def __init__(self):
         super().__init__(width=550,height=610,background='black',highlightthickness=0)
         
-        self.w=560
-        self.h=620
-        self.pac_pos=(40,20)
-        self.direction="Right"
-        self.MOVE_INCREMENT=0
+        self.w=560  # taille de
+        self.h=620  # la fenetre
+        self.pac_pos=(40,20) # position initaile du pacman
+        self.direction="Right" # direction initiale du pacman
+        self.MOVE_INCREMENT=0 # initialisation du déplacement du pacman
       
-        self.enemy_pos=(500,580)
+        self.enemy_pos=(500,580) # initialisation d'un ennemi
         self.previous_enemy_pos = self.enemy_pos 
         
-        self.col=len(list(ascii_maze[0]))
+
+        self.col=len(list(ascii_maze[0])) 
         self.line=len(list(ascii_maze))
         self.matrix=np.zeros((self.line,self.col))
         
@@ -106,8 +108,8 @@ class labyrinthe(tk.Canvas):
                     self.matrix[i][j]=1
                     
                     
-                    
-        self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
+        # liste des positions de toutes les cases du labyrinthe
+        self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)] 
         self.load_assets()
         self.create_labyrinthe()
         
@@ -123,6 +125,7 @@ class labyrinthe(tk.Canvas):
         
         
     def load_assets(self):
+        # chargement des images
         self.wall_image=Image.open("pixel_art//wall.png")
         
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
@@ -136,6 +139,7 @@ class labyrinthe(tk.Canvas):
         self.enemy_image=Image.open("pixel_art//enemy1.png")
         self.enemy_body=ImageTk.PhotoImage(self.enemy_image)
     def create_labyrinthe(self):
+        # dessine le labyrinthe en ajoutant des murs
         for i,j in self.list_of_coordinates:
             if j//20<31 and i//20 <28:
                 if self.matrix[j//20,i//20]==0:
@@ -143,6 +147,7 @@ class labyrinthe(tk.Canvas):
             
     
     def BFS(self,depart, arrivee,adj):
+       # algo de parcours de graphe
        a_explorer = [depart]
        deja_collectes = [depart]
        self.chemins = {depart: [depart]}
@@ -162,6 +167,7 @@ class labyrinthe(tk.Canvas):
        return None
    
     def draw_path(self):
+        # dessine le chemin le plus cours
         for pos in self.BFS((1,2),(29,25)):
             self.create_image(20*pos[1],20*pos[0],image=self.wall2_body,tag='wall2')
         
@@ -170,9 +176,11 @@ class labyrinthe(tk.Canvas):
         self.create_image(*self.pac_pos,image=self.pac_body,tag='pacman')
     
     def move_pac(self):
+        # initialise la position a sa position actuelle
         x_pos=self.pac_pos[0]
         y_pos=self.pac_pos[1]
         
+        #selon la direction et si la case suivant est disponible change la position par l'incrément dans la bonne direction
         if self.direction=='Right':
             if (y_pos//20,(x_pos//20)+1) in adj[(y_pos//20,x_pos//20)]:
                  x_pos=x_pos+self.MOVE_INCREMENT
@@ -193,6 +201,7 @@ class labyrinthe(tk.Canvas):
         self.MOVE_INCREMENT=0
          
     def on_key_press(self,event):
+        # lance le deplacement lorsqu'on lance le jeu
         self.MOVE_INCREMENT=20
         new_order=event.keysym
         all_directions=["Right","Up","Left","Down"]
@@ -200,6 +209,7 @@ class labyrinthe(tk.Canvas):
             self.direction=new_order
         
     def perform_actions1(self):
+        #boucle temporelle
         self.move_pac()
         
         self.after(80, self.perform_actions1)
@@ -218,13 +228,14 @@ class labyrinthe(tk.Canvas):
     
         
     def move_randomly_or_follow(self):
+        # fait le chemin entre l'ennemi et le pacman
         L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj)
         if L:
-         if len(L)<15:
+         if len(L)<15: # si le pacman est suffisament proche l'ennemi se rapproche
             self.enemy_pos=(L[1][1]*20,L[1][0]*20)
             self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
             L.pop(0)   
-         else:
+         else: # sinon l'ennemi bouge aléatoirement
             a,b=random.choice(self.B)
             self.coords('enemy',b*20,a*20)
             self.B=adj[(a,b)]
@@ -235,8 +246,61 @@ class labyrinthe(tk.Canvas):
      
          
 root.title("pacman with Tkinter")
-root.resizable(False,False) 
+root.resizable(False,False)
 board=labyrinthe()
 board.pack()
 
 root.mainloop()
+
+
+"""
+graph = dict()
+graph["A"]=[("B",1),("D",1),("G",2)]
+graph["B"]=[("A",1),("F",1.5),("C",1)]
+graph["C"]=[("B",1),("D",1),("E",2)]
+graph["D"]=[("A",1),("C",1)]
+graph["E"]=[("C",2),("F",3)]
+graph["F"]=[("B",1.5),("E",3)]
+graph["G"]=[("A",2)]
+graph["H"]=[]
+
+grille = dict()
+#axe x croissant vers la droite
+#axe y croissant vert le haut
+#origine A = (0,0)
+grille["A"] = (0,0)
+grille["B"] = (1,0)
+grille["C"] = (1,-1)
+grille["D"] = (0,-1)
+grille["E"] = (3,-1)
+grille["F"] = (2.06,1.06)
+grille["G"] = (-2,0)
+grille["H"] = (2,4)
+
+def distance_heur(grille, pt1, pt2):
+    x1,y1 = grille[pt1]
+    x2,y2 = grille[pt2]
+    distance = sqrt((x2-x1)**2 + (y2-y1)**2)
+    return distance
+
+def astar(graphe, source, arrivee, grille):
+    p = PriorityQueue()
+    p.put((distance_heur(grille,source,arrivee),0, source, source))
+    arbo = dict()
+    explorer = [source]
+    for sommet in graphe:
+        arbo[sommet] = [inf,"None"]
+    arbo[source] = [0,"None"]
+    noeud = source
+    while arrivee not in explorer and not p.empty():
+        for adj,taille in graphe[noeud]:
+            if adj not in explorer:
+                dist = min(arbo[adj][0], arbo[noeud][0]+taille)
+                target = dist + distance_heur(grille,adj,arrivee)
+                p.put((target, dist, adj, noeud))
+        vol_oiseau, trajet, nouv_sommet, precedent  = p.get()
+        noeud = nouv_sommet
+        explorer.append(nouv_sommet)
+        arbo[nouv_sommet] = [trajet, precedent]
+    return arbo, p
+"""
