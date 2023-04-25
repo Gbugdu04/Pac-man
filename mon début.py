@@ -1,7 +1,7 @@
 import numpy as np
 import tkinter as tk
 from PIL import Image,ImageTk
-import json
+import csv
 import random
 import copy
 import time
@@ -56,8 +56,8 @@ class main_menu():
     
     def create_adjacency(self):
         self.adj={}
-        
-        self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
+        self.adj[(14,27)]=[(14,0),(14,26)]
+        # self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
         self.adj[(14,0)]=[(14,self.col-1),(14,1)]
         
         for i in range(1,self.line):
@@ -81,40 +81,39 @@ class main_menu():
                             
 MENU=main_menu(ascii_maze)
 adj=MENU.adj
+adj[(14,27)]=[(14,0),(14,26)]
 adj1=copy.deepcopy(adj)
 adj2=copy.deepcopy(adj)
 
 class labyrinthe(tk.Canvas):
     def __init__(self):
-        super().__init__(width=550,height=610,background='black',highlightthickness=0)
-        
-        
+        super().__init__(width=600,height=680,background='black',highlightthickness=0)
         self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 16), bg="black", fg="white")
         self.create_window(275, 305, window=self.timer_label)
         self.start_time = time.time()
-        
-        
         self.w=560
         self.h=620
         self.pac_pos=(40,20)
+        self.last_pac_pos=self.pac_pos
         self.direction="Right"
         self.MOVE_INCREMENT=0
-      
         self.enemy_pos=(500,580)
-        self.ghost_pos=(400,400)
-        self.previous_enemy_pos = self.enemy_pos 
-        
+        self.ghost_pos=(400,400) 
+        self.radius=20
         self.col=len(list(ascii_maze[0]))
         self.line=len(list(ascii_maze))
         self.matrix=np.zeros((self.line,self.col))
-        
         for i in range(self.line):
             for j in range(self.col):
                 if ascii_maze[i][j]==" ":
                     self.matrix[i][j]=1
-                    
-                  
-                    
+        self.pac_is_dead=False     
+        self.enemy1_frozen=False
+        self.enemy2_frozen=False
+        self.possess_gem=False
+        self.flakes_list=[1]
+        self.score=0        
+        self.available=[]
         self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
         self.load_assets()
         self.create_labyrinthe()
@@ -126,49 +125,70 @@ class labyrinthe(tk.Canvas):
         self.bind_all("<KeyRelease>",self.on_key_release)
         self.perform_actions1()
         self.create_enemy()
-        
-        # self.follow_pac()
         self.L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj)
         self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj2)
-        self.move_randomly_or_follow()
-        self.move_randomly_or_follow1()
+        if self.pac_is_dead==False:
+            self.move_randomly_or_follow()
+            self.move_randomly_or_follow1()
         # self.draw_path()   #####FONCTION POUR TESTER LE PARCOUR DE GRAPHE
         self.coin_eaten()
+        self.create_gem()
+        self.get_gem()
+        
+        #self.bind_all("<space>",self.throw_flakes)
+        self.throw_flakes()
+        self.freeze1()
+        self.freeze()
         
     def load_assets(self):
-        self.wall_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall.png")
+        self.wall_image=Image.open("wall.png")
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
         
-        self.wall2_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall2.png")
+        self.wall2_image=Image.open("wall2.png")
         self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
-        self.pac_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacmanr.png")
+        self.pac_image=Image.open("pacmanr.png")
         self.pac_body=ImageTk.PhotoImage(self.pac_image)
         
-        self.pacleft_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacman left.png")
+        self.pacleft_image=Image.open("pacman left.png")
         self.pacleft_body=ImageTk.PhotoImage(self.pacleft_image)
         
-        self.pacup_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacman up.png")
+        self.pacup_image=Image.open("pacman up.png")
         self.pacup_body=ImageTk.PhotoImage(self.pacup_image)
         
-        self.pacdown_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacman down.png")
+        self.pacdown_image=Image.open("pacman down.png")
         self.pacdown_body=ImageTk.PhotoImage(self.pacdown_image)
         
-        
-        self.enemy_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//enemy1.png")
+        self.enemy_image=Image.open("enemy1.png")
         self.enemy_body=ImageTk.PhotoImage(self.enemy_image)
         
-        self.coin_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//coin2.png")
+        self.coin_image=Image.open("coin2.png")
         self.coin_body=ImageTk.PhotoImage(self.coin_image)
         
-        self.ghost_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//ghost.png")
+        self.ghost_image=Image.open("ghost.png")
         self.ghost_body=ImageTk.PhotoImage(self.ghost_image)
+        
+        self.plant_image=Image.open("plant.png")
+        self.plant_body=ImageTk.PhotoImage(self.plant_image)
+        
+        self.life_image=Image.open("life.gif")
+        self.life_body=ImageTk.PhotoImage(self.life_image)
+        
+        self.flakes1_image=Image.open("flakes1.png")
+        self.flakes1_body=ImageTk.PhotoImage(self.flakes1_image)
+        
+        self.flakes2_image=Image.open("flakes2.png")
+        self.flakes2_body=ImageTk.PhotoImage(self.flakes2_image)
+        
+        self.gem_image=Image.open("gem.png")
+        self.gem_body=ImageTk.PhotoImage(self.gem_image)
         
     def create_labyrinthe(self):
         for i,j in self.list_of_coordinates:
             if j//20<31 and i//20 <28:
                 if self.matrix[j//20,i//20]==0:
                     self.create_image(i,j,image=self.wall_body,tag='wall')
+        
             
     
     def BFS(self,depart, arrivee,adj):
@@ -227,7 +247,7 @@ class labyrinthe(tk.Canvas):
         if self.direction=='Left':
             if (y_pos//20 ,(x_pos//20)-1) in adj1[(y_pos//20,x_pos//20)]:
                 x_pos=x_pos-self.MOVE_INCREMENT
-        
+        self.last_pac_pos=self.pac_pos
         self.pac_pos=(x_pos,y_pos)
         
         self.coords('pacman',self.pac_pos)
@@ -253,9 +273,10 @@ class labyrinthe(tk.Canvas):
         # fait le chemin entre l'ennemi et le pacman
         
         self.L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
-        if self.L:
-         if len(self.L)<20: # si le pacman est suffisament proche l'ennemi se rapproche
-            if len(self.L) in [18,19]:
+        
+        if (len(self.L)>1 and self.pac_is_dead==False):
+         if len(self.L)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
+            if len(self.L) in [self.radius-1,self.radius-2]:
                 self.B=adj1[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)].copy()
             self.enemy_pos=(self.L[1][1]*20,self.L[1][0]*20)
             self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
@@ -267,8 +288,30 @@ class labyrinthe(tk.Canvas):
             if (self.enemy_pos[1]//20,self.enemy_pos[0]//20) in self.B:
                 self.B.remove((self.enemy_pos[1]//20,self.enemy_pos[0]//20))
             self.enemy_pos=(self.b*20,self.a*20)
+        elif len(self.L)<=1:
+            self.pac_is_dead=True
         self.after(170,self.move_randomly_or_follow)
         
+    def move_randomly_or_follow1(self):
+                # fait le chemin entre l'ennemi et le pacman
+                self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
+                if (len(self.H)>1 and self.pac_is_dead==False):
+                 if len(self.H)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
+                    if len(self.H) in [18,19]:
+                        self.K=adj1[(self.ghost_pos[1]//20,self.ghost_pos[0]//20)].copy()
+                    self.ghost_pos=(self.H[1][1]*20,self.H[1][0]*20)
+                    self.coords('ghost',(self.ghost_pos[0],self.ghost_pos[1]))
+                    self.H.pop(0)
+                 else: # sinon l'ennemi bouge aléatoirement
+                    self.a,self.b=random.choice(self.K)
+                    self.coords('ghost',self.b*20,self.a*20)
+                    self.K=adj1[(self.a,self.b)].copy()
+                    if (self.ghost_pos[1]//20,self.ghost_pos[0]//20) in self.K:
+                        self.K.remove((self.ghost_pos[1]//20,self.ghost_pos[0]//20))
+                    self.ghost_pos=(self.b*20,self.a*20)
+                elif (len(self.H)<=1 ):
+                    self.pac_is_dead=True
+                self.after(170,self.move_randomly_or_follow1)    
     def create_coins(self):
      self.coins = {}
      for (i, j) in adj1.keys():
@@ -278,37 +321,81 @@ class labyrinthe(tk.Canvas):
         self.create_image(x, y, image=self.coin_body, tag=tag)
         self.coins[tag] = (i, j)
         
+        
     def coin_eaten(self):
      x_pos = self.pac_pos[0]
      y_pos = self.pac_pos[1]
      coin_tag = f"{y_pos//20},{x_pos//20}"
      if coin_tag in self.coins:
+        self.available.append(self.coins[coin_tag])
         del self.coins[coin_tag]
         self.delete(coin_tag)
      if self.coins:
         self.after(80, self.coin_eaten)
 
-    def move_randomly_or_follow1(self):
-            # fait le chemin entre l'ennemi et le pacman
-            self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
-            if self.H:
-             if len(self.H)<20: # si le pacman est suffisament proche l'ennemi se rapproche
-                if len(self.H) in [18,19]:
-                    self.K=adj1[(self.ghost_pos[1]//20,self.ghost_pos[0]//20)].copy()
-                self.ghost_pos=(self.H[1][1]*20,self.H[1][0]*20)
-                self.coords('ghost',(self.ghost_pos[0],self.ghost_pos[1]))
-                self.H.pop(0)
-             else: # sinon l'ennemi bouge aléatoirement
-                self.a,self.b=random.choice(self.K)
-                self.coords('ghost',self.b*20,self.a*20)
-                self.K=adj1[(self.a,self.b)].copy()
-                if (self.ghost_pos[1]//20,self.ghost_pos[0]//20) in self.K:
-                    self.K.remove((self.ghost_pos[1]//20,self.ghost_pos[0]//20))
-                self.ghost_pos=(self.b*20,self.a*20)
-            self.after(170,self.move_randomly_or_follow1)
+
+            
     def update_timer(self):
+      if self.pac_is_dead==False:
         elapsed_time = int((time.time() - self.start_time) // 1)
         self.timer_label.config(text=f"Time: {elapsed_time}")
+        self.score=elapsed_time
+
+
+    def create_gem(self):
+        if len(self.available)>=10 and self.possess_gem==False:
+            if len(self.coords("gem"))==0:
+                (i,j)=random.choice(self.available)
+                self.gem_pos=(i*20,j*20)
+                self.create_image(j*20,i*20,image=self.gem_body ,tag="gem")
+        self.after(5000,self.create_gem)
+        
+    def get_gem(self):
+        if self.coords("gem") :
+            if self.pac_pos[0]==self.gem_pos[1] and self.pac_pos[1]==self.gem_pos[0]:
+                self.delete("gem")
+                self.possess_gem=True
+        self.after(80,self.get_gem)
+        
+    def throw_flakes(self):
+        if self.possess_gem==True and len(self.flakes_list)!=0:
+            if self.flakes_list[-1]%2==0:
+                self.create_image(*self.last_pac_pos,image=self.flakes2_body,tag='flakes') 
+            else:
+                self.create_image(*self.last_pac_pos,image=self.flakes1_body,tag='flakes')
+            self.flakes_list.pop(-1)
+            if len(self.flakes_list)==0:
+                self.possess_gem=False
+        self.after(3000,self.throw_flakes)
+    def freeze(self):
+      pos1=self.coords("flakes")
+      pos2=self.coords("ghsot")
+      if self.coords("flakes"):
+        print(pos1,pos2)
+        if pos1==pos2:
+            self.ghost_frozen=True
+            self.after_cancel(self.move_randomly_or_follow1)
+        self.after(500,self.unfreeze)
+    def unfreeze(self):
+        if self.ghost_frozen:
+            self.ghost_frozen=False
+        self.move_randomly_or_follow1()
+    def freeze1(self):
+      pos3=self.coords("enemy")
+      pos1=self.coords("flakes")
+      if self.coords("flakes"):
+        print(pos1,pos3)
+        if pos1[1]==pos3[0] and pos1[0]==pos3[1] :
+            self.enemy_frozen=True
+            self.after_cancel(self.move_randomly_or_follow)
+        self.after(500,self.unfreeze1)
+    def unfreeze1(self):
+         if self.enemy_frozen:
+             self.enemy_frozen=False
+         self.move_randomly_or_follow()   
+
+
+
 
 root.title("pacman with Tkinter")
 root.resizable(False,False) 
