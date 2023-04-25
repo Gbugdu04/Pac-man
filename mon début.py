@@ -147,7 +147,7 @@ class labyrinthe(tk.Canvas):
         self.wall2_image=Image.open("wall2.png")
         self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
-        self.pac_image=Image.open("pacmanr.png")
+        self.pac_image=Image.open("pacman.png")
         self.pac_body=ImageTk.PhotoImage(self.pac_image)
         
         self.pacleft_image=Image.open("pacman left.png")
@@ -167,12 +167,6 @@ class labyrinthe(tk.Canvas):
         
         self.ghost_image=Image.open("ghost.png")
         self.ghost_body=ImageTk.PhotoImage(self.ghost_image)
-        
-        self.plant_image=Image.open("plant.png")
-        self.plant_body=ImageTk.PhotoImage(self.plant_image)
-        
-        self.life_image=Image.open("life.gif")
-        self.life_body=ImageTk.PhotoImage(self.life_image)
         
         self.flakes1_image=Image.open("flakes1.png")
         self.flakes1_body=ImageTk.PhotoImage(self.flakes1_image)
