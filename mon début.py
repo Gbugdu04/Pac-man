@@ -136,32 +136,31 @@ class labyrinthe(tk.Canvas):
         self.coin_eaten()
         
     def load_assets(self):
-        self.wall_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall.png")
+        self.wall_image=Image.open("wall.png")
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
         
-        self.wall2_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//wall2.png")
+        self.wall2_image=Image.open("wall2.png")
         self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
-        self.pac_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacmanr.png")
+        self.pac_image=Image.open("pacmanr.png")
         self.pac_body=ImageTk.PhotoImage(self.pac_image)
         
-        self.pacleft_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacman left.png")
+        self.pacleft_image=Image.open("pacman left.png")
         self.pacleft_body=ImageTk.PhotoImage(self.pacleft_image)
         
-        self.pacup_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacman up.png")
+        self.pacup_image=Image.open("pacman up.png")
         self.pacup_body=ImageTk.PhotoImage(self.pacup_image)
         
-        self.pacdown_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//pacman down.png")
+        self.pacdown_image=Image.open("pacman down.png")
         self.pacdown_body=ImageTk.PhotoImage(self.pacdown_image)
         
-        
-        self.enemy_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//enemy1.png")
+        self.enemy_image=Image.open("enemy1.png")
         self.enemy_body=ImageTk.PhotoImage(self.enemy_image)
         
-        self.coin_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//coin2.png")
+        self.coin_image=Image.open("coin2.png")
         self.coin_body=ImageTk.PhotoImage(self.coin_image)
         
-        self.ghost_image=Image.open("D://pg python//pygame trial//Tkinter//pacman//ghost.png")
+        self.ghost_image=Image.open("ghost.png")
         self.ghost_body=ImageTk.PhotoImage(self.ghost_image)
         
     def create_labyrinthe(self):
