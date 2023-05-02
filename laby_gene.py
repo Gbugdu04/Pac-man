@@ -10,51 +10,89 @@ def liens_dico(dico):
         dico_liens[element] = [len(element), liens_fait]
     return dico_liens
 
- def aleatoire(proba=0.5):
-    n = random.randint(0,100)
-    if n < proba*100:
+def aleatoire(proba): # entre 0 et 1
+    n = random.randint(0,1000)
+    if n < proba*1000:
         return True
     else:
         return False
 
 def init_graphe(x, y):
-    noeud_faits = 0
     dico_sommets = dict()
+    dico_adj = dict()
     for i in range(x):
         for j in range(y):
-            dico_sommets[(i,j)] = [[0,False],[]]  
-            # [liste nb lien et plus de lien possible, liste des adjacences coord et lien fait]
-            if i != 0:
-                dico_sommets[(i,j)][1].append([(i-1,j), False])
-                dico_sommets[(i,j)][0][1] += 1
+            dico_sommets[(i,j)] = [0, 0, [False, False, False, False]]
+            #  nb lien possible et lien fait, liste gauche, droite, haut bas
             if i != x-1:
-                dico_sommets[(i,j)][1].append([(i+1,j), False])
-                dico_sommets[(i,j)][0][1] += 1
+                dico_adj[((i,j),(i+1,j))] = False
+                dico_sommets[(i,j)][2][1] = True
+                dico_sommets[(i,j)][0] += 1
+            if i != 0:
+                dico_sommets[(i,j)][2][0] = True
+                dico_sommets[(i,j)][0] += 1
             if j != 0:
-                dico_sommets[(i,j)][1].append([(i,j-1), False])
-                dico_sommets[(i,j)][0][1] += 1
+                dico_sommets[(i,j)][2][2] = True
+                dico_sommets[(i,j)][0] += 1
             if j != y-1:
-                dico_sommets[(i,j)][1].append([(i,j+1), False])
-                dico_sommets[(i,j)][0][1] += 1
+                dico_adj[((i,j),(i,j+1))] = False
+                dico_sommets[(i,j)][2][3] = True
+                dico_sommets[(i,j)][0] += 1
 
-    while noeud_faits < len(dico_sommets):
-        for element, adjacences in dico_sommets:
-            if not element[1]:   
-                #revoir cette partie pour utiliser le second bool
-                for chemin in adjacences:
-                    if chemin[1] and aleatoire(1/len(adjacences)):
-                        
+    # prendre sommet random et faire des liens 
+    liste_sommets = list(dico_sommets.keys())
+    for _ in range(len(dico_sommets.keys())):
+        sommet = random.choice(liste_sommets)
+        liste_sommets.remove(sommet)
+        x1, y1 = sommet
+        possible, deja_fait, card = dico_sommets[sommet]
+        list_a_faire = []
+        for i in range(possible-1):
+            list_a_faire.append(i+2-deja_fait)
+        a_faire = random.choice(list_a_faire)
+        fait = 0
+        l = [p for p in range(4)]
+        while (a_faire != fait) and (l != []):
+            direction = random.choice(l)
+            l.remove(direction)
+            if card[direction]:
+                if (direction == 0) and not dico_adj[((x1-1,y1),sommet)]: #gauche
+                    dico_adj[((x1-1,y1),sommet)] = True
+                    dico_sommets[(x1-1,y1)][1] += 1
+                    fait += 1 
+                if (direction == 1) and not dico_adj[(sommet,(x1+1,y1))]: #droite
+                    dico_adj[(sommet,(x1+1,y1))] = True
+                    dico_sommets[(x1+1,y1)][1] += 1
+                    fait += 1 
+                if (direction == 2) and not dico_adj[((x1,y1-1),sommet)]: #haut
+                    dico_adj[((x1,y1-1),sommet)] = True
+                    dico_sommets[(x1,y1-1)][1] += 1
+                    fait += 1
+                if (direction == 3) and not dico_adj[(sommet,(x1,y1+1))]: #bas
+                    dico_adj[(sommet,(x1,y1+1))] = True
+                    dico_sommets[(x1,y1+1)][1] += 1
+                    fait += 1
+            
+    return dico_adj
 
-                if aleatoire(((element[0]-len(adjacences))**2)/(4*len(adjacences)-7)):
-                    element[0] += 1
-                    direction = random.randint(0,len(adjacences))
-                    adjacences[direction][1] = True
-                    case_liee = adjacences[direction][0]
-                    dico_sommets[case_liee][0][0] += 1 
-                    dico_sommets[case_liee][0][0] += 1
+def tableau_gen(x,y):
+    dico_adj = init_graphe(x,y)
+    tableau = [["X" for i in range(2*x+1)] for j in range(2*y+1)]
+    traits = []
+    for i in range(x):
+        for j in range(y):
+            tableau[2*j+1][2*i+1] = " "
+    for (x1,y1), (x2,y2) in dico_adj:
+        if dico_adj[(x1,y1), (x2,y2)]:
+            tableau[(y1+y2)+1][(x1+x2)+1] = " "
+    tableau_propre = []
+    for ligne in tableau:
+        a = ""
+        for element in ligne:
+            a += element
+        tableau_propre.append(a)
+    return tableau_propre
 
-
-    return dico_sommets
-
-print(init_graphe(1,2))
-
+tab = tableau_gen(10,5)
+for ligne in tab:
+    print(ligne)
