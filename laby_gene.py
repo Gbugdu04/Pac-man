@@ -1,5 +1,28 @@
 import random
 
+def aleatoire(proba): # entre 0 et 1
+    n = random.randint(0,100)
+    if n < proba*100:
+        return True
+    else:
+        return False
+    
+def choix(l):
+    if len(l) == 1:
+        return l[0]
+    elif len(l) == 2:
+        if aleatoire(1):
+            return l[0]
+        else:
+            return l[1]
+    elif len(l) == 3:
+        if aleatoire(1):
+            return l[0]
+        elif aleatoire(1):
+            return l[1]
+        else:
+            return l[2]
+
 def liens_dico(dico):
     dico_liens = dict()
     for element in dico:
@@ -9,13 +32,6 @@ def liens_dico(dico):
                 liens_fait += 1
         dico_liens[element] = [len(element), liens_fait]
     return dico_liens
-
-def aleatoire(proba): # entre 0 et 1
-    n = random.randint(0,1000)
-    if n < proba*1000:
-        return True
-    else:
-        return False
 
 def init_graphe(x, y):
     dico_sommets = dict()
@@ -49,7 +65,7 @@ def init_graphe(x, y):
         list_a_faire = []
         for i in range(possible-1):
             list_a_faire.append(i+2-deja_fait)
-        a_faire = random.choice(list_a_faire)
+        a_faire = choix(list_a_faire)
         fait = 0
         l = [p for p in range(4)]
         while (a_faire != fait) and (l != []):
@@ -93,6 +109,4 @@ def tableau_gen(x,y):
         tableau_propre.append(a)
     return tableau_propre
 
-tab = tableau_gen(10,5)
-for ligne in tab:
-    print(ligne)
+print(tableau_gen(15,15))
