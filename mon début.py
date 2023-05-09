@@ -8,39 +8,27 @@ import time
 
 root=tk.Tk()
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
-ascii_maze=[                   
-            "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-            "X            XX            X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X                          X",
-            "X XXXX XX XXXXXXXX XX XXXX X",
-            "X XXXX XX XXXXXXXX XX XXXX X",
-            "X      XX    XX    XX      X",
-            "XXXXXX XXXXX XX XXXXX XXXXXX",
-            "XXXXXX XXXXX XX XXXXX XXXXXX",
-            "XXXXXX XX          XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "          XXXXXXXX          ",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "XXXXXX XX          XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "XXXXXX XX XXXXXXXX XX XXXXXX",
-            "X            XX            X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X XXXX XXXXX XX XXXXX XXXX X",
-            "X   XX                XX   X",
-            "XXX XX XX XXXXXXXX XX XX XXX",
-            "XXX XX XX XXXXXXXX XX XX XXX",
-            "X      XX    XX    XX      X",
-            "X XXXXXXXXXX XX XXXXXXXXXX X",
-            "X XXXXXXXXXX XX XXXXXXXXXX X",
-            "X                          X",
-            "XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        ]
+ascii_maze=['XXXXXXXXXXXXXXXXXXXXX', 
+            'X     X     X   X   X', 
+            'X XXX X X X X X X X X', 
+            'X       X   X     X X', 
+            'X XXX X X X X X X X X', 
+            'X X       X   X     X', 
+            'X X XXX XXXXX XXXXX X', 
+            'X     X   X         X', 
+            'X XXX XXX X X XXX X X', 
+            'X           X     X X', 
+            'X XXX X XXXXXXX X X X', 
+            'X       X       X   X', 
+            'XXXXXXXXX XXXXXXXXX X', 
+            'X   X           X   X', 
+            'X X X X XXXXX X X X X', 
+            'X   X X X   X X X   X', 
+            'XXXXX X X X X X XXXXX', 
+            'X     X X   X   X   X', 
+            'X XXX X X XXX XXX X X', 
+            'X     X             X', 
+            'XXXXXXXXXXXXXXXXXXXXX']
 class main_menu():
     def __init__(self,ascii_maze):
         
@@ -56,9 +44,9 @@ class main_menu():
     
     def create_adjacency(self):
         self.adj={}
-        self.adj[(14,27)]=[(14,0),(14,26)]
+        #self.adj[(14,27)]=[(14,0),(14,26)]
         # self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
-        self.adj[(14,0)]=[(14,self.col-1),(14,1)]
+        #self.adj[(14,0)]=[(14,self.col-1),(14,1)]
         
         for i in range(1,self.line):
             for j in range(1,self.col):
@@ -81,7 +69,7 @@ class main_menu():
                             
 MENU=main_menu(ascii_maze)
 adj=MENU.adj
-adj[(14,27)]=[(14,0),(14,26)]
+#adj[(14,27)]=[(14,0),(14,26)]
 adj1=copy.deepcopy(adj)
 adj2=copy.deepcopy(adj)
 
@@ -91,17 +79,17 @@ class labyrinthe(tk.Canvas):
         self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 16), bg="black", fg="white")
         self.create_window(275, 305, window=self.timer_label)
         self.start_time = time.time()
-        self.w=560
-        self.h=620
-        self.pac_pos=(40,20)
+        self.w=640
+        self.h=640
+        self.col=len(list(ascii_maze[0]))
+        self.line=len(list(ascii_maze))
+        self.pac_pos=(20,20)
         self.last_pac_pos=self.pac_pos
         self.direction="Right"
         self.MOVE_INCREMENT=0
-        self.enemy_pos=(500,580)
-        self.ghost_pos=(400,400) 
+        self.enemy_pos=(20,20*(self.line-2))
+        self.ghost_pos=(20*(self.col-2),20*(self.line-2))
         self.radius=20
-        self.col=len(list(ascii_maze[0]))
-        self.line=len(list(ascii_maze))
         self.matrix=np.zeros((self.line,self.col))
         for i in range(self.line):
             for j in range(self.col):
@@ -179,7 +167,7 @@ class labyrinthe(tk.Canvas):
         
     def create_labyrinthe(self):
         for i,j in self.list_of_coordinates:
-            if j//20<31 and i//20 <28:
+            if (j//20<self.line) and (i//20 <self.col) :
                 if self.matrix[j//20,i//20]==0:
                     self.create_image(i,j,image=self.wall_body,tag='wall')
         
