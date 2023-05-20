@@ -1,4 +1,5 @@
 import random
+import json 
 
 def aleatoire(proba): # entre 0 et 1
     n = random.randint(0,100)
@@ -114,7 +115,11 @@ def tableau_gen(x,y):
             tableau_propre.append(a)
     return tableau_propre
 
-tab = tableau_gen(7,7)
-print(tab)
-for ligne in tab:
-    print(ligne)
+dico_tableaux = dict()
+for i in range(10):
+    dico_tableaux[i] = tableau_gen(7,7)
+
+with open("dico_labyrinthe.json","w", encoding='utf-8') as f:
+    json.dump(dico_tableaux, f, indent = 4)
+
+
