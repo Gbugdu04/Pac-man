@@ -11,14 +11,14 @@ def choix(l):
     if len(l) == 1:
         return l[0]
     elif len(l) == 2:
-        if aleatoire(1):
+        if aleatoire(0.99):
             return l[0]
         else:
             return l[1]
     elif len(l) == 3:
-        if aleatoire(1):
+        if aleatoire(0.99):
             return l[0]
-        elif aleatoire(1):
+        elif aleatoire(0.99):
             return l[1]
         else:
             return l[2]
@@ -105,10 +105,16 @@ def tableau_gen(x,y):
         a = ""
         for i_element in range(len(tableau[i_ligne])):
             a += tableau[i_ligne][i_element]
-            if i_element 
+            if i_element != 0 and i_element != len(tableau[i_ligne])-1 and i_element%2 == 0 :
+                a += tableau[i_ligne][i_element]
+                a += tableau[i_ligne][i_element]
         tableau_propre.append(a)
+        if i_ligne != 0 and i_ligne != len(tableau)-1 and i_ligne%2 == 0 :
+            tableau_propre.append(a)
+            tableau_propre.append(a)
     return tableau_propre
 
-tab = tableau_gen(4,4)
+tab = tableau_gen(7,7)
+print(tab)
 for ligne in tab:
     print(ligne)

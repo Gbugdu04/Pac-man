@@ -8,7 +8,7 @@ import time
 
 root=tk.Tk()
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
-ascii_maze=['XXXXXXXXXXXXXXX', 'X     X       X', 'X X X X XXX X X', 'X X         X X', 'X XXXXXXXXXXX X', 'X X       X   X', 'X X XXXXX X X X', 'X X   X     X X', 'X X X X X X X X', 'X X X   X     X', 'X X X XXXXX X X', 'X   X     X   X', 'X X X X X XXX X', 'X   X   X     X', 'XXXXXXXXXXXXXXX']
+ascii_maze=['XXXXXXXXXXXXXXXXXXXXXXXXXXX', 'X     XXX                 X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX     XXX             X', 'X XXXXXXX XXX XXXXXXXXXXX X', 'X XXXXXXX XXX XXXXXXXXXXX X', 'X XXXXXXX XXX XXXXXXXXXXX X', 'X                     XXX X', 'XXXXXXXXXXXXX XXX XXX XXX X', 'XXXXXXXXXXXXX XXX XXX XXX X', 'XXXXXXXXXXXXX XXX XXX XXX X', 'X     XXX     XXX XXX     X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X                     XXX X', 'X XXX XXXXXXXXXXXXXXX XXX X', 'X XXX XXXXXXXXXXXXXXX XXX X', 'X XXX XXXXXXXXXXXXXXX XXX X', 'X     XXX         XXX     X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X     XXX                 X', 'XXXXXXXXXXXXXXXXXXXXXXXXXXX']
 class main_menu():
     def __init__(self,ascii_maze):
         
