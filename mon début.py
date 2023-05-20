@@ -8,27 +8,7 @@ import time
 
 root=tk.Tk()
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
-ascii_maze=['XXXXXXXXXXXXXXXXXXXXX', 
-            'X     X     X   X   X', 
-            'X XXX X X X X X X X X', 
-            'X       X   X     X X', 
-            'X XXX X X X X X X X X', 
-            'X X       X   X     X', 
-            'X X XXX XXXXX XXXXX X', 
-            'X     X   X         X', 
-            'X XXX XXX X X XXX X X', 
-            'X           X     X X', 
-            'X XXX X XXXXXXX X X X', 
-            'X       X       X   X', 
-            'XXXXXXXXX XXXXXXXXX X', 
-            'X   X           X   X', 
-            'X X X X XXXXX X X X X', 
-            'X   X X X   X X X   X', 
-            'XXXXX X X X X X XXXXX', 
-            'X     X X   X   X   X', 
-            'X XXX X X XXX XXX X X', 
-            'X     X             X', 
-            'XXXXXXXXXXXXXXXXXXXXX']
+ascii_maze=['XXXXXXXXXXXXXXX', 'X     X       X', 'X X X X XXX X X', 'X X         X X', 'X XXXXXXXXXXX X', 'X X       X   X', 'X X XXXXX X X X', 'X X   X     X X', 'X X X X X X X X', 'X X X   X     X', 'X X X XXXXX X X', 'X   X     X   X', 'X X X X X XXX X', 'X   X   X     X', 'XXXXXXXXXXXXXXX']
 class main_menu():
     def __init__(self,ascii_maze):
         
@@ -75,20 +55,20 @@ adj2=copy.deepcopy(adj)
 
 class labyrinthe(tk.Canvas):
     def __init__(self):
-        super().__init__(width=600,height=680,background='black',highlightthickness=0)
+        super().__init__(width=20*len(list(ascii_maze[0])),height=20*len(list(ascii_maze)),background='black',highlightthickness=0)
         self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 16), bg="black", fg="white")
         self.create_window(275, 305, window=self.timer_label)
         self.start_time = time.time()
-        self.w=640
-        self.h=640
         self.col=len(list(ascii_maze[0]))
         self.line=len(list(ascii_maze))
+        self.w=20*len(list(ascii_maze[0]))
+        self.h=20*len(list(ascii_maze))
         self.pac_pos=(20,20)
         self.last_pac_pos=self.pac_pos
         self.direction="Right"
         self.MOVE_INCREMENT=0
-        self.enemy_pos=(20,20*(self.line-2))
-        self.ghost_pos=(20*(self.col-2),20*(self.line-2))
+        self.enemy_pos=(20,20*(self.col-2))
+        self.ghost_pos=(20*(self.line-2),20*(self.col-2))
         self.radius=20
         self.matrix=np.zeros((self.line,self.col))
         for i in range(self.line):

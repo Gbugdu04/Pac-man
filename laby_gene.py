@@ -94,7 +94,6 @@ def init_graphe(x, y):
 def tableau_gen(x,y):
     dico_adj = init_graphe(x,y)
     tableau = [["X" for i in range(2*x+1)] for j in range(2*y+1)]
-    traits = []
     for i in range(x):
         for j in range(y):
             tableau[2*j+1][2*i+1] = " "
@@ -102,11 +101,14 @@ def tableau_gen(x,y):
         if dico_adj[(x1,y1), (x2,y2)]:
             tableau[(y1+y2)+1][(x1+x2)+1] = " "
     tableau_propre = []
-    for ligne in tableau:
+    for i_ligne in range(len(tableau)):
         a = ""
-        for element in ligne:
-            a += element
+        for i_element in range(len(tableau[i_ligne])):
+            a += tableau[i_ligne][i_element]
+            if i_element 
         tableau_propre.append(a)
     return tableau_propre
 
-print(tableau_gen(15,15))
+tab = tableau_gen(4,4)
+for ligne in tab:
+    print(ligne)
