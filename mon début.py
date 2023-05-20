@@ -185,6 +185,7 @@ class labyrinthe(tk.Canvas):
         
         
     def create_pacr(self):
+       if self.pac_is_dead==False:
         if self.direction=="Right":   
             self.delete("pacman")
             self.create_image(*self.pac_pos,image=self.pac_body,tag='pacman')
@@ -201,6 +202,7 @@ class labyrinthe(tk.Canvas):
             
     
     def move_pac(self):
+      if self.pac_is_dead==False:
         x_pos=self.pac_pos[0]
         y_pos=self.pac_pos[1]
         
@@ -367,7 +369,11 @@ class labyrinthe(tk.Canvas):
             with open('pac_file.csv', 'w', newline='') as file:
                 writer = csv.writer(file)
                 writer.writerows(self.data)
-
+    def game_over(self):
+        if self.enemy_pos==self.pac_pos or self.ghost_pos==self.pac_pos:
+            self.pac_is_dead=True
+            self.create_image(270,220,image=self.game_over_body,tag='game_over')
+        self.after(80,self.game_over)
 
 
 root.title("pacman with Tkinter")
