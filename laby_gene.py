@@ -116,7 +116,7 @@ def tableau_gen(x,y):
     return tableau_propre
 
 dico_tableaux = dict()
-for i in range(10):
+for i in range(30):
     dico_tableaux[i] = tableau_gen(7,7)
 
 #with open("dico_labyrinthe.json","w", encoding='utf-8') as f:
