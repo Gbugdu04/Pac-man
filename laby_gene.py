@@ -119,6 +119,6 @@ dico_tableaux = dict()
 for i in range(10):
     dico_tableaux[i] = tableau_gen(7,7)
 
-with open("dico_labyrinthe.json","w", encoding='utf-8') as f:
-    json.dump(dico_tableaux, f, indent = 4)
+#with open("dico_labyrinthe.json","w", encoding='utf-8') as f:
+#    json.dump(dico_tableaux, f, indent = 4)
 
