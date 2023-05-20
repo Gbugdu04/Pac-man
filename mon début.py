@@ -79,6 +79,12 @@ class labyrinthe(tk.Canvas):
         self.enemy1_frozen=False
         self.enemy2_frozen=False
         self.possess_gem=False
+        self.data=[
+            ['Name', 'Score' ],
+            ['John', 25],
+            ['Sarah', 30 ],
+            ['Mike', 21 ]
+        ]
         self.flakes_list=[1]
         self.score=0        
         self.available=[]
@@ -107,6 +113,7 @@ class labyrinthe(tk.Canvas):
         self.throw_flakes()
         self.freeze1()
         self.freeze()
+        self.modify_data()
         
     def load_assets(self):
         self.wall_image=Image.open("wall.png")
@@ -355,7 +362,11 @@ class labyrinthe(tk.Canvas):
          if self.enemy_frozen:
              self.enemy_frozen=False
          self.move_randomly_or_follow()   
-
+    def modify_data(self):
+        if self.pac_is_dead==True:
+            with open('pac_file.csv', 'w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerows(self.data)
 
 
 
