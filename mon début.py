@@ -2,17 +2,23 @@ import numpy as np
 import tkinter as tk
 from PIL import Image,ImageTk
 import csv
+import json
 import random
 import copy
 import time
 
 root=tk.Tk()
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
-ascii_maze=['XXXXXXXXXXXXXXXXXXXXXXXXXXX', 'X     XXX                 X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX     XXX             X', 'X XXXXXXX XXX XXXXXXXXXXX X', 'X XXXXXXX XXX XXXXXXXXXXX X', 'X XXXXXXX XXX XXXXXXXXXXX X', 'X                     XXX X', 'XXXXXXXXXXXXX XXX XXX XXX X', 'XXXXXXXXXXXXX XXX XXX XXX X', 'XXXXXXXXXXXXX XXX XXX XXX X', 'X     XXX     XXX XXX     X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X                     XXX X', 'X XXX XXXXXXXXXXXXXXX XXX X', 'X XXX XXXXXXXXXXXXXXX XXX X', 'X XXX XXXXXXXXXXXXXXX XXX X', 'X     XXX         XXX     X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X XXX XXX XXXXXXX XXXXXXX X', 'X     XXX                 X', 'XXXXXXXXXXXXXXXXXXXXXXXXXXX']
+def choix_labyrinthe():
+        with open("dico_labyrinthe.json","r") as f:
+            liste_tab = json.load(f)
+            random_maze = random.choice(list(liste_tab.values()))
+        return random_maze
+ascii_maze = choix_labyrinthe()
 class main_menu():
-    def __init__(self,ascii_maze):
+    def __init__(self, ascii_maze):
         
-        self.ascii_maze=ascii_maze
+        self.ascii_maze= ascii_maze
         self.col=len(list(self.ascii_maze[0]))
         self.line=len(list(self.ascii_maze))
         self.matrix=np.zeros((self.line,self.col))
@@ -22,6 +28,9 @@ class main_menu():
                     self.matrix[i][j]=1
         self.create_adjacency()
     
+    
+
+
     def create_adjacency(self):
         self.adj={}
         #self.adj[(14,27)]=[(14,0),(14,26)]
