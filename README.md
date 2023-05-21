@@ -1,6 +1,6 @@
 # Pac-man
 Un jeu pac-man simple utilisant la librarie tkinter
-## Libraires
+## Librairies
 Notre programme utilise un certain nombre de librairies python
 
 Veuillez vérifier qu'elles sont toutes installées
