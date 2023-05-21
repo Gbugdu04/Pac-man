@@ -34,5 +34,7 @@ Les fichiers avec l'extension .py sont des fichiers contenant des programmes en 
 
 ## Fonctionnement du jeu
 Il faut appuyer sur "start", sur la fenetre graphique, pour lancer le jeu
+
 Chaque lancement dans le terminal correspond à une partie
+
 Il faut réinitialiser le kernel pour chaque nouvelle partie
