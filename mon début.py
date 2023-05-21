@@ -8,6 +8,11 @@ import copy
 import time
 
 root=tk.Tk()
+
+
+    
+
+
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
 def choix_labyrinthe():
         with open("dico_labyrinthe.json","r") as f:
@@ -131,7 +136,7 @@ class labyrinthe(tk.Canvas):
         self.wall2_image=Image.open("wall2.png")
         self.wall2_body=ImageTk.PhotoImage(self.wall2_image)
         
-        self.pac_image=Image.open("pacman.png")
+        self.pac_image=Image.open("pacmanr.png")
         self.pac_body=ImageTk.PhotoImage(self.pac_image)
         
         self.pacleft_image=Image.open("pacman left.png")
@@ -292,7 +297,6 @@ class labyrinthe(tk.Canvas):
                 elif (len(self.H)<=1 ):
                     self.pac_is_dead=True
                 self.after(170,self.move_randomly_or_follow1)    
-
     def create_coins(self):
      self.coins = {}
      for (i, j) in adj1.keys():
@@ -301,7 +305,8 @@ class labyrinthe(tk.Canvas):
         tag = f"{i},{j}"
         self.create_image(x, y, image=self.coin_body, tag=tag)
         self.coins[tag] = (i, j)
-         
+        
+        
     def coin_eaten(self):
      x_pos = self.pac_pos[0]
      y_pos = self.pac_pos[1]
@@ -312,12 +317,15 @@ class labyrinthe(tk.Canvas):
         self.delete(coin_tag)
      if self.coins:
         self.after(80, self.coin_eaten)
-    
+
+
+            
     def update_timer(self):
       if self.pac_is_dead==False:
         elapsed_time = int((time.time() - self.start_time) // 1)
         self.timer_label.config(text=f"Time: {elapsed_time}")
         self.score=elapsed_time
+
 
     def create_gem(self):
         if len(self.available)>=10 and self.possess_gem==False:
@@ -380,11 +388,35 @@ class labyrinthe(tk.Canvas):
             self.pac_is_dead=True
             self.create_image(270,220,image=self.game_over_body,tag='game_over')
         self.after(80,self.game_over)
-
-
-root.title("pacman with Tkinter")
-root.resizable(False,False) 
 board=labyrinthe()
-board.pack()
+def open_new_window():
+    button.destroy()
+    
+    board.pack()
+    
+def quit_game():
+    root.destroy()
 
+
+
+start_image = 'START_BUTTON.png'
+start_image_for_button =tk.PhotoImage(file=start_image)
+button = tk.Button(root, command=open_new_window,image=start_image_for_button)
+button.pack()
+
+quit_image = Image.open='quit.png'
+quit_image_for_button =tk.PhotoImage(file=quit_image)
+button2=tk.Button(root,command=quit_game,image=quit_image_for_button)
+button2.pack()
+
+rule_image = 'howtoplay.png'
+rule_image_for_button =tk.PhotoImage(file=rule_image)
+        
+        
+        
 root.mainloop()
+
+
+
+
+#root.mainloop()
