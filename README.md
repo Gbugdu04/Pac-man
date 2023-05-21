@@ -38,3 +38,11 @@ Sur la fenetre graphique, il faut appuyer sur "start" pour lancer le jeu
 Chaque lancement dans le terminal correspond à une partie
 
 Il faut réinitialiser le kernel pour chaque nouvelle partie
+
+## Outils de programmation 
+
+Nous avons travaillé sur une platforme de partage de code GITHUB, dont le lien est donné juste ici : https://github.com/Gbugdu04/Pac-man 
+
+Nous nous sommes également servi du logiciel Visual Studio Code et de Spyder pour coder notre programme 
+
+Pour la rédaction des compte-rendus, nous avons utilisé l'application Google docs
