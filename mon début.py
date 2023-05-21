@@ -128,7 +128,7 @@ class labyrinthe(tk.Canvas):
         self.freeze1()
         self.freeze()
         self.modify_data()
-        
+        self.game_over()
     def load_assets(self):
         self.wall_image=Image.open("wall.png")
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
@@ -165,6 +165,9 @@ class labyrinthe(tk.Canvas):
         
         self.gem_image=Image.open("gem.png")
         self.gem_body=ImageTk.PhotoImage(self.gem_image)
+        
+        self.game_over_image=Image.open("GAME_OVER.png")
+        self.game_over_body=ImageTk.PhotoImage(self.game_over_image)
         
     def create_labyrinthe(self):
         for i,j in self.list_of_coordinates:
