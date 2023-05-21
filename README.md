@@ -35,6 +35,8 @@ Les fichiers avec l'extension .py sont des fichiers contenant des programmes en 
 ## Fonctionnement du jeu
 Sur la fenetre graphique, il faut appuyer sur "start" pour lancer le jeu
 
+Pour gagner une partie plus facilement, il est possible de réduire la fonction "self.radius" à 3 maximum
+
 Chaque lancement dans le terminal correspond à une partie
 
 Il faut réinitialiser le kernel pour chaque nouvelle partie
