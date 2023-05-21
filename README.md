@@ -31,3 +31,10 @@ Les fichiers avec l'extension .py sont des fichiers contenant des programmes en 
 
  - laby_gene.py est un programme qui génère des grilles de labyrinthe. Il possède un morceau de code commenté qui peut écrire une liste de labyrinthe dans le .json.
  - main.py est le programme principal de notre jeu pac-man. Il suffit de le lancer pour créer l'interface graphique permettant de jouer.
+
+## Fonctionnement du jeu
+Sur la fenetre graphique, il faut appuyer sur "start" pour lancer le jeu
+
+Chaque lancement dans le terminal correspond à une partie
+
+Il faut réinitialiser le kernel pour chaque nouvelle partie
