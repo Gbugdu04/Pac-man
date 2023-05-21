@@ -292,6 +292,7 @@ class labyrinthe(tk.Canvas):
                 elif (len(self.H)<=1 ):
                     self.pac_is_dead=True
                 self.after(170,self.move_randomly_or_follow1)    
+
     def create_coins(self):
      self.coins = {}
      for (i, j) in adj1.keys():
@@ -300,8 +301,7 @@ class labyrinthe(tk.Canvas):
         tag = f"{i},{j}"
         self.create_image(x, y, image=self.coin_body, tag=tag)
         self.coins[tag] = (i, j)
-        
-        
+         
     def coin_eaten(self):
      x_pos = self.pac_pos[0]
      y_pos = self.pac_pos[1]
@@ -312,15 +312,12 @@ class labyrinthe(tk.Canvas):
         self.delete(coin_tag)
      if self.coins:
         self.after(80, self.coin_eaten)
-
-
-            
+    
     def update_timer(self):
       if self.pac_is_dead==False:
         elapsed_time = int((time.time() - self.start_time) // 1)
         self.timer_label.config(text=f"Time: {elapsed_time}")
         self.score=elapsed_time
-
 
     def create_gem(self):
         if len(self.available)>=10 and self.possess_gem==False:
