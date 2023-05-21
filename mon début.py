@@ -120,15 +120,10 @@ class labyrinthe(tk.Canvas):
             self.move_randomly_or_follow1()
         # self.draw_path()   #####FONCTION POUR TESTER LE PARCOUR DE GRAPHE
         self.coin_eaten()
-        self.create_gem()
-        self.get_gem()
+      
         
-        #self.bind_all("<space>",self.throw_flakes)
-        self.throw_flakes()
-        self.freeze1()
-        self.freeze()
-        self.modify_data()
         self.game_over()
+        self.you_won()
     def load_assets(self):
         self.wall_image=Image.open("wall.png")
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
@@ -168,6 +163,9 @@ class labyrinthe(tk.Canvas):
         
         self.game_over_image=Image.open("GAME_OVER.png")
         self.game_over_body=ImageTk.PhotoImage(self.game_over_image)
+        
+        self.Victory_image=Image.open("victory.png")
+        self.Victory_body=ImageTk.PhotoImage(self.Victory_image)
         
     def create_labyrinthe(self):
         for i,j in self.list_of_coordinates:
@@ -330,67 +328,21 @@ class labyrinthe(tk.Canvas):
         self.score=elapsed_time
 
 
-    def create_gem(self):
-        if len(self.available)>=10 and self.possess_gem==False:
-            if len(self.coords("gem"))==0:
-                (i,j)=random.choice(self.available)
-                self.gem_pos=(i*20,j*20)
-                self.create_image(j*20,i*20,image=self.gem_body ,tag="gem")
-        self.after(5000,self.create_gem)
-        
-    def get_gem(self):
-        if self.coords("gem") :
-            if self.pac_pos[0]==self.gem_pos[1] and self.pac_pos[1]==self.gem_pos[0]:
-                self.delete("gem")
-                self.possess_gem=True
-        self.after(80,self.get_gem)
-        
-    def throw_flakes(self):
-        if self.possess_gem==True and len(self.flakes_list)!=0:
-            if self.flakes_list[-1]%2==0:
-                self.create_image(*self.last_pac_pos,image=self.flakes2_body,tag='flakes') 
-            else:
-                self.create_image(*self.last_pac_pos,image=self.flakes1_body,tag='flakes')
-            self.flakes_list.pop(-1)
-            if len(self.flakes_list)==0:
-                self.possess_gem=False
-        self.after(3000,self.throw_flakes)
-    def freeze(self):
-      pos1=self.coords("flakes")
-      pos2=self.coords("ghsot")
-      if self.coords("flakes"):
-        print(pos1,pos2)
-        if pos1==pos2:
-            self.ghost_frozen=True
-            self.after_cancel(self.move_randomly_or_follow1)
-        self.after(500,self.unfreeze)
-    def unfreeze(self):
-        if self.ghost_frozen:
-            self.ghost_frozen=False
-        self.move_randomly_or_follow1()
-    def freeze1(self):
-      pos3=self.coords("enemy")
-      pos1=self.coords("flakes")
-      if self.coords("flakes"):
-        print(pos1,pos3)
-        if pos1[1]==pos3[0] and pos1[0]==pos3[1] :
-            self.enemy_frozen=True
-            self.after_cancel(self.move_randomly_or_follow)
-        self.after(500,self.unfreeze1)
-    def unfreeze1(self):
-         if self.enemy_frozen:
-             self.enemy_frozen=False
-         self.move_randomly_or_follow()   
-    def modify_data(self):
-        if self.pac_is_dead==True:
-            with open('pac_file.csv', 'w', newline='') as file:
-                writer = csv.writer(file)
-                writer.writerows(self.data)
+    
     def game_over(self):
         if self.enemy_pos==self.pac_pos or self.ghost_pos==self.pac_pos:
             self.pac_is_dead=True
             self.create_image(270,220,image=self.game_over_body,tag='game_over')
         self.after(80,self.game_over)
+    
+    def you_won(self):
+        if len(self.coins.keys())==0:
+            self.create_image(270,220,image=self.Victory_body,tag='Victory')
+            self.delete('pacman')
+        self.after(80,self.you_won)
+        
+        
+        
 board=labyrinthe()
 def open_new_window():
     button.destroy()
