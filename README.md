@@ -33,7 +33,7 @@ Les fichiers avec l'extension .py sont des fichiers contenant des programmes en 
  - main.py est le programme principal de notre jeu pac-man. Il suffit de le lancer pour créer l'interface graphique permettant de jouer.
 
 ## Fonctionnement du jeu
-Il faut appuyer sur "start", sur la fenetre graphique, pour lancer le jeu
+Sur la fenetre graphique, il faut appuyer sur "start" pour lancer le jeu
 
 Chaque lancement dans le terminal correspond à une partie
 
