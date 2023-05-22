@@ -78,7 +78,7 @@ class labyrinthe(tk.Canvas):
         # créer le timer
         self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 12), bg="black", fg="white")
         self.create_window(60, 50, window=self.timer_label)
-        self.start_time = time.time()
+        self.start_game=False
         
         # définit la taille et les attributs initiaux des entités du jeu
         self.col=len(list(ascii_maze[0]))
@@ -100,6 +100,7 @@ class labyrinthe(tk.Canvas):
         self.pac_is_dead=False   ### Si le pacman est mort elle prend la valeur True
         self.pac_won = False #### si le pacman a gagné elle prend la valeur True
         self.available=[]
+        self.start_timer()
         
         # Découpage du labyrinthe en grille et attribution de chaque case des coordonnées
         self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
@@ -312,7 +313,7 @@ class labyrinthe(tk.Canvas):
         
         # tant que le pacman et le fantôme n'occupent pas la même position
         # et tant que le jeu n'est ni perdu ni gagné
-        if (len(self.L)>1 and self.pac_is_dead==False and self.pac_won==False):
+        if (len(self.L)>1 and self.pac_is_dead==False and self.pac_won==False and self.start_game==True):
             
             # si le pacman est suffisament proche l'ennemi se rapproche
             if len(self.L)<self.radius:
@@ -348,7 +349,7 @@ class labyrinthe(tk.Canvas):
         """
 
         self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
-        if (len(self.H)>1 and self.pac_is_dead==False and self.pac_won==False):
+        if (len(self.H)>1 and self.pac_is_dead==False and self.pac_won==False and self.start_game==True):
             if len(self.H)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
                 if len(self.H) in [18,19]:
                     self.K=adj1[(self.ghost_pos[1]//20,self.ghost_pos[0]//20)].copy()
@@ -395,6 +396,11 @@ class labyrinthe(tk.Canvas):
             self.after(80, self.coin_eaten)
 
 
+    def start_timer(self):
+        if self.start_game==True:
+            self.start_time = time.time()
+        else:
+            self.after(80,self.start_timer) 
             
     def update_timer(self):
         """
@@ -439,6 +445,7 @@ def open_new_window():
     lance une fenêtre graphique
     """
     button.destroy()
+    board.start_game=True
     board.pack()
     
 def quit_game():
