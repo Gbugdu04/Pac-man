@@ -288,7 +288,6 @@ class labyrinthe(tk.Canvas):
         Au bout de 80 ms en réexecute la fonction responsable du mouvement du pacman
         """
         self.move_pac()
-        self.update_timer()
         self.after(80, self.perform_actions1)
         
     def create_enemy(self):
@@ -394,25 +393,7 @@ class labyrinthe(tk.Canvas):
             self.delete(coin_tag)
         if self.coins:
             self.after(80, self.coin_eaten)
-
-
-    def start_timer(self):
-        if self.start_game==True:
-            self.start_time = time.time()
-        else:
-            self.after(80,self.start_timer) 
-            
-    def update_timer(self):
-        """
-        met à jour le timer tant que la partie est en cours
-        """
-        if self.pac_is_dead==False and self.pac_won==False and self.start_game == True:
-            elapsed_time = int((time.time() - self.start_time) // 1)
-            self.timer_label.config(text=f"Time: {elapsed_time}")
-            self.score=elapsed_time
-
-
-    
+   
     def game_over(self):
         """
         déclenche le game over si le joueur est atteint par un monstre
@@ -437,11 +418,18 @@ class labyrinthe(tk.Canvas):
 board=labyrinthe()
 def open_new_window():
     """
-    lance une fenêtre graphique
+    lance une fenêtre graphique et le timer
     """
     button.destroy()
     board.start_game=True
+    global timer_label
+    global start_time
+    start_time=time.time()
+    timer_label = tk.Label(root, text="Time: 0", font=("Arial", 16), bg="black", fg="white")
+    #board.create_window(10, 10, window=timer_label)
+    timer_label.pack(side=tk.TOP)
     board.pack()
+    update_timer()
     
 def quit_game():
     """
@@ -461,7 +449,13 @@ def open_rules():
     board2 = racine2
     button3.destroy()
     board2.pack()
-
+    
+def update_timer():
+  if board.pac_is_dead==False and board.pac_won==False and board.start_game==True:
+    elapsed_time = int((time.time() - start_time) // 1)
+    timer_label.config(text=f"Time: {elapsed_time}")
+    timer_label.after(1000,update_timer)
+    
 # bouton start
 start_image = 'START_BUTTON.png'
 start_image_for_button =tk.PhotoImage(file=start_image)
