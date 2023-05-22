@@ -451,10 +451,10 @@ def update_timer():
    """
    permet de mettre a jour le timer figurant dans la fenêtre principale 
    """
-  if board.pac_is_dead==False and board.pac_won==False and board.start_game==True:
-    elapsed_time = int((time.time() - start_time) // 1)
-    timer_label.config(text=f"Time: {elapsed_time}")
-    timer_label.after(1000,update_timer)
+   if board.pac_is_dead==False and board.pac_won==False and board.start_game==True:
+     elapsed_time = int((time.time() - start_time) // 1)
+     timer_label.config(text=f"Time: {elapsed_time}")
+     timer_label.after(1000,update_timer)
     
 # bouton start
 start_image = 'START_BUTTON.png'
