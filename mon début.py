@@ -1,17 +1,14 @@
 import numpy as np
 import tkinter as tk
 from PIL import Image,ImageTk
-import csv
 import json
 import random
 import copy
 import time
+from tkinter import PhotoImage
+
 
 root=tk.Tk()
-
-
-    
-
 
 #####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
 def choix_labyrinthe():
@@ -39,7 +36,7 @@ class main_menu():
     def create_adjacency(self):
         self.adj={}
         #self.adj[(14,27)]=[(14,0),(14,26)]
-        # self.adj[(14,self.col-1)]=[(14,0),(14,26)] 
+        # self.adj[(14,self.col-1)]=[(14,0),(14,26)]
         #self.adj[(14,0)]=[(14,self.col-1),(14,1)]
         
         for i in range(1,self.line):
@@ -56,7 +53,7 @@ class main_menu():
                     if self.matrix[i][j-1]==1:
                         self.adj[(i,j)].append((i,j-1))
                         
-                    if j+1<self.col:   
+                    if j+1<self.col:  
                         if self.matrix[i][j+1]==1:
                             self.adj[(i,j)].append((i,j+1))
                             
@@ -89,7 +86,8 @@ class labyrinthe(tk.Canvas):
             for j in range(self.col):
                 if ascii_maze[i][j]==" ":
                     self.matrix[i][j]=1
-        self.pac_is_dead=False     
+        self.pac_is_dead=False    
+        self.pac_won = False
         self.enemy1_frozen=False
         self.enemy2_frozen=False
         self.possess_gem=False
@@ -115,7 +113,7 @@ class labyrinthe(tk.Canvas):
         self.create_enemy()
         self.L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj)
         self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj2)
-        if self.pac_is_dead==False:
+        if self.pac_is_dead==False and self.pac_won==False:
             self.move_randomly_or_follow()
             self.move_randomly_or_follow1()
         # self.draw_path()   #####FONCTION POUR TESTER LE PARCOUR DE GRAPHE
@@ -164,7 +162,7 @@ class labyrinthe(tk.Canvas):
         self.game_over_image=Image.open("GAME_OVER.png")
         self.game_over_body=ImageTk.PhotoImage(self.game_over_image)
         
-        self.Victory_image=Image.open("victory.png")
+        self.Victory_image=Image.open("victory (2).png")
         self.Victory_body=ImageTk.PhotoImage(self.Victory_image)
         
     def create_labyrinthe(self):
@@ -193,15 +191,15 @@ class labyrinthe(tk.Canvas):
                        deja_collectes.append(sommet)
                        self.chemins[sommet] = self.chemins[courant] + [sommet]
        return None
-   
+  
     def draw_path(self):
         for pos in self.BFS((1,2),(29,25)):
             self.create_image(20*pos[1],20*pos[0],image=self.wall2_body,tag='wall2')
         
         
     def create_pacr(self):
-       if self.pac_is_dead==False:
-        if self.direction=="Right":   
+       if self.pac_is_dead==False and self.pac_won == False:
+        if self.direction=="Right":  
             self.delete("pacman")
             self.create_image(*self.pac_pos,image=self.pac_body,tag='pacman')
         if self.direction=="Left":
@@ -213,11 +211,11 @@ class labyrinthe(tk.Canvas):
         if self.direction=="Down":
             self.delete("pacman")
             self.create_image(*self.pac_pos,image=self.pacdown_body,tag='pacman')
-        self.after(80,self.create_pacr) 
+        self.after(80,self.create_pacr)
             
     
     def move_pac(self):
-      if self.pac_is_dead==False:
+      if self.pac_is_dead==False and self.pac_won == False:
         x_pos=self.pac_pos[0]
         y_pos=self.pac_pos[1]
         
@@ -239,7 +237,7 @@ class labyrinthe(tk.Canvas):
         self.coords('pacman',self.pac_pos)
     def on_key_release(self,event):
         self.MOVE_INCREMENT=0
-         
+        
     def on_key_press(self,event):
         self.MOVE_INCREMENT=20
         new_order=event.keysym
@@ -260,44 +258,48 @@ class labyrinthe(tk.Canvas):
         
         self.L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
         
-        if (len(self.L)>1 and self.pac_is_dead==False):
-         if len(self.L)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
-            if len(self.L) in [self.radius-1,self.radius-2]:
-                self.B=adj1[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)].copy()
-            self.enemy_pos=(self.L[1][1]*20,self.L[1][0]*20)
-            self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
-            self.L.pop(0)
-         else: # sinon l'ennemi bouge aléatoirement
-            self.a,self.b=random.choice(self.B)
-            self.coords('enemy',self.b*20,self.a*20)
-            self.B=adj1[(self.a,self.b)].copy()
-            if (self.enemy_pos[1]//20,self.enemy_pos[0]//20) in self.B:
-                self.B.remove((self.enemy_pos[1]//20,self.enemy_pos[0]//20))
-            self.enemy_pos=(self.b*20,self.a*20)
+        if (len(self.L)>1 and self.pac_is_dead==False and self.pac_won==False):
+            if len(self.L)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
+                if len(self.L) in [self.radius-1,self.radius-2]:
+                    self.B=adj1[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)].copy()
+                self.enemy_pos=(self.L[1][1]*20,self.L[1][0]*20)
+                self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
+                self.L.pop(0)
+            else: # sinon l'ennemi bouge aléatoirement
+                self.a,self.b=random.choice(self.B)
+                self.coords('enemy',self.b*20,self.a*20)
+                self.B=adj1[(self.a,self.b)].copy()
+                if (self.enemy_pos[1]//20,self.enemy_pos[0]//20) in self.B:
+                    self.B.remove((self.enemy_pos[1]//20,self.enemy_pos[0]//20))
+                self.enemy_pos=(self.b*20,self.a*20)
         elif len(self.L)<=1:
             self.pac_is_dead=True
+      
         self.after(170,self.move_randomly_or_follow)
         
     def move_randomly_or_follow1(self):
                 # fait le chemin entre l'ennemi et le pacman
-                self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
-                if (len(self.H)>1 and self.pac_is_dead==False):
-                 if len(self.H)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
-                    if len(self.H) in [18,19]:
-                        self.K=adj1[(self.ghost_pos[1]//20,self.ghost_pos[0]//20)].copy()
-                    self.ghost_pos=(self.H[1][1]*20,self.H[1][0]*20)
-                    self.coords('ghost',(self.ghost_pos[0],self.ghost_pos[1]))
-                    self.H.pop(0)
-                 else: # sinon l'ennemi bouge aléatoirement
-                    self.a,self.b=random.choice(self.K)
-                    self.coords('ghost',self.b*20,self.a*20)
-                    self.K=adj1[(self.a,self.b)].copy()
-                    if (self.ghost_pos[1]//20,self.ghost_pos[0]//20) in self.K:
-                        self.K.remove((self.ghost_pos[1]//20,self.ghost_pos[0]//20))
-                    self.ghost_pos=(self.b*20,self.a*20)
-                elif (len(self.H)<=1 ):
-                    self.pac_is_dead=True
-                self.after(170,self.move_randomly_or_follow1)    
+        self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
+        if (len(self.H)>1 and self.pac_is_dead==False and self.pac_won==False):
+            if len(self.H)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
+                if len(self.H) in [18,19]:
+                    self.K=adj1[(self.ghost_pos[1]//20,self.ghost_pos[0]//20)].copy()
+                self.ghost_pos=(self.H[1][1]*20,self.H[1][0]*20)
+                self.coords('ghost',(self.ghost_pos[0],self.ghost_pos[1]))
+                self.H.pop(0)
+            else: # sinon l'ennemi bouge aléatoirement
+                self.a,self.b=random.choice(self.K)
+                self.coords('ghost',self.b*20,self.a*20)
+                self.K=adj1[(self.a,self.b)].copy()
+                if (self.ghost_pos[1]//20,self.ghost_pos[0]//20) in self.K:
+                    self.K.remove((self.ghost_pos[1]//20,self.ghost_pos[0]//20))
+                self.ghost_pos=(self.b*20,self.a*20)
+        elif (len(self.H)<=1 ):
+            self.pac_is_dead=True
+        
+        self.after(170,self.move_randomly_or_follow1)    
+        
+        
     def create_coins(self):
      self.coins = {}
      for (i, j) in adj1.keys():
@@ -322,7 +324,7 @@ class labyrinthe(tk.Canvas):
 
             
     def update_timer(self):
-      if self.pac_is_dead==False:
+      if self.pac_is_dead==False and self.pac_won==False:
         elapsed_time = int((time.time() - self.start_time) // 1)
         self.timer_label.config(text=f"Time: {elapsed_time}")
         self.score=elapsed_time
@@ -336,22 +338,33 @@ class labyrinthe(tk.Canvas):
         self.after(80,self.game_over)
     
     def you_won(self):
-        if len(self.coins.keys())==0:
+        if len(self.coins.keys())==0 and self.pac_is_dead == False:
+            self.pac_won == True
+            
             self.create_image(270,220,image=self.Victory_body,tag='Victory')
             self.delete('pacman')
+            self.pac_pos = (2000,2000)
         self.after(80,self.you_won)
-        
-        
-        
+
 board=labyrinthe()
 def open_new_window():
     button.destroy()
-    
     board.pack()
     
 def quit_game():
     root.destroy()
+    
+def open_rules():
+    
+    img=PhotoImage(file="consignes.png")
 
+    racine2=tk.Toplevel(root, height = 500, width = 500)
+    label1 = tk.Label(racine2, image = img)
+    label1.place(x = 0, y = 0)
+    board2 = racine2
+    button3.destroy()
+    board2.pack()
+    
 
 
 start_image = 'START_BUTTON.png'
@@ -366,12 +379,8 @@ button2.pack()
 
 rule_image = 'howtoplay.png'
 rule_image_for_button =tk.PhotoImage(file=rule_image)
-        
-        
-        
+button3=tk.Button(root, command = open_rules, image= rule_image_for_button )
+button3.pack()
+
+  
 root.mainloop()
-
-
-
-
-#root.mainloop()
