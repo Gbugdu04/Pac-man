@@ -74,10 +74,6 @@ class labyrinthe(tk.Canvas):
     
     def __init__(self):
         super().__init__(width=20*len(list(ascii_maze[0])),height=20*len(list(ascii_maze)),background='black',highlightthickness=0)
-        
-        # créer le timer
-        self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 12), bg="black", fg="white")
-        self.create_window(60, 50, window=self.timer_label)
         self.start_game=False
         
         # définit la taille et les attributs initiaux des entités du jeu
@@ -100,7 +96,7 @@ class labyrinthe(tk.Canvas):
         self.pac_is_dead=False   ### Si le pacman est mort elle prend la valeur True
         self.pac_won = False #### si le pacman a gagné elle prend la valeur True
         self.available=[]
-        self.start_timer()
+        
         
         # Découpage du labyrinthe en grille et attribution de chaque case des coordonnées
         self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
