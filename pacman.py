@@ -7,9 +7,7 @@ import copy
 import time
 from tkinter import PhotoImage
 
-
 root=tk.Tk()
-
 
 def choix_labyrinthe():
     """
@@ -20,9 +18,6 @@ def choix_labyrinthe():
         random_maze = random.choice(list(liste_tab.values()))
     return random_maze
 ascii_maze = choix_labyrinthe()
-
-
-
 
 class main_menu():
     """
@@ -41,9 +36,6 @@ class main_menu():
                 if self.ascii_maze[i][j]==" ":
                     self.matrix[i][j]=1
         self.create_adjacency()
-    
-    
-
 
     def create_adjacency(self):
         """
