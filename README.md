@@ -11,7 +11,6 @@ Liste des librairies utilisées :
  -  tkinter
  -  json
  -  random
- -  csv
  -  PIL
  -  numpy
  -  copy
@@ -23,9 +22,9 @@ Les fichiers avec l'extension .png sont des images utiles pour l'affichage graph
 
 Il ne faut ni les renommer, ni les modifier, ni les déplacer
 ### Les tableaux
-pac_file.csv et dico_labyrinthe.json sont des tableaux de données
+dico_labyrinthe.json est un tableau de donnée
 
-Il ne faut ni les renommer, ni les modifier, ni les déplacer
+Il ne faut ni le renommer, ni le modifier, ni le déplacer
 ### Les fichiers python
 Les fichiers avec l'extension .py sont des fichiers contenant des programmes en language python
 

@@ -434,11 +434,6 @@ class labyrinthe(tk.Canvas):
             self.pac_pos = (2000,2000)
         self.after(80,self.you_won)
 
-
-"""
-
-"""
-
 board=labyrinthe()
 def open_new_window():
     """
