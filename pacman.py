@@ -406,7 +406,7 @@ class labyrinthe(tk.Canvas):
         """
         met à jour le timer tant que la partie est en cours
         """
-        if self.pac_is_dead==False and self.pac_won==False:
+        if self.pac_is_dead==False and self.pac_won==False and self.start_game == True:
             elapsed_time = int((time.time() - self.start_time) // 1)
             self.timer_label.config(text=f"Time: {elapsed_time}")
             self.score=elapsed_time
