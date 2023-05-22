@@ -10,19 +10,27 @@ from tkinter import PhotoImage
 
 root=tk.Tk()
 
-#####https://itnext.io/how-to-create-pac-man-in-python-in-300-lines-of-code-or-less-part-1-288d54baf939
+
 def choix_labyrinthe():
+    # Fonction pour choisir un labyrinthe aléatoire à partir d'un fichier JSON
         with open("dico_labyrinthe.json","r") as f:
             liste_tab = json.load(f)
             random_maze = random.choice(list(liste_tab.values()))
         return random_maze
 ascii_maze = choix_labyrinthe()
+
+
+
+
 class main_menu():
+    
+    ### Classe pour représenter le labyrinthe comme graphe
     def __init__(self, ascii_maze):
         
         self.ascii_maze= ascii_maze
-        self.col=len(list(self.ascii_maze[0]))
-        self.line=len(list(self.ascii_maze))
+        self.col=len(list(self.ascii_maze[0])) ### Lignes
+        self.line=len(list(self.ascii_maze)) ### Colonnes 
+        # Création d'une matrice pour représenter le labyrinthe
         self.matrix=np.zeros((self.line,self.col))
         for i in range(self.line):
             for j in range(self.col):
@@ -34,10 +42,9 @@ class main_menu():
 
 
     def create_adjacency(self):
+        ### Creation d'un dictionnaire d'adjacence 
+        
         self.adj={}
-        #self.adj[(14,27)]=[(14,0),(14,26)]
-        # self.adj[(14,self.col-1)]=[(14,0),(14,26)]
-        #self.adj[(14,0)]=[(14,self.col-1),(14,1)]
         
         for i in range(1,self.line):
             for j in range(1,self.col):
@@ -56,11 +63,10 @@ class main_menu():
                     if j+1<self.col:  
                         if self.matrix[i][j+1]==1:
                             self.adj[(i,j)].append((i,j+1))
-                            
+        ### Ce dictionnaire représente le graphe correpondant au labyrinthe sélectionné     
                             
 MENU=main_menu(ascii_maze)
 adj=MENU.adj
-#adj[(14,27)]=[(14,0),(14,26)]
 adj1=copy.deepcopy(adj)
 adj2=copy.deepcopy(adj)
 
@@ -74,55 +80,55 @@ class labyrinthe(tk.Canvas):
         self.line=len(list(ascii_maze))
         self.w=20*len(list(ascii_maze[0]))
         self.h=20*len(list(ascii_maze))
-        self.pac_pos=(20,20)
+        self.pac_pos=(20,20) ### Position du pacman
         self.last_pac_pos=self.pac_pos
         self.direction="Right"
         self.MOVE_INCREMENT=0
-        self.enemy_pos=(20,20*(self.col-2))
-        self.ghost_pos=(20*(self.line-2),20*(self.col-2))
-        self.radius=20
+        self.enemy_pos=(20,20*(self.col-2)) ### Position initiale du fantôme 1
+        self.ghost_pos=(20*(self.line-2),20*(self.col-2))  ### Position initiale du fantôme 2
+        self.radius=20  ### Rayon sous lequel les fantômes commencent à suivre le pacman
         self.matrix=np.zeros((self.line,self.col))
         for i in range(self.line):
             for j in range(self.col):
                 if ascii_maze[i][j]==" ":
                     self.matrix[i][j]=1
-        self.pac_is_dead=False    
-        self.pac_won = False
-        self.enemy1_frozen=False
-        self.enemy2_frozen=False
-        self.possess_gem=False
-        self.data=[
-            ['Name', 'Score' ],
-            ['John', 25],
-            ['Sarah', 30 ],
-            ['Mike', 21 ]
-        ]
-        self.flakes_list=[1]
-        self.score=0        
+        self.pac_is_dead=False   ### Si le pacman est mort elle prend la valeur True
+        self.pac_won = False #### si le pacman a gagné elle prend la valeur True
         self.available=[]
+        
+        ### Découpage du labyrinthe en grille et attribution de chaque case des coordonnées
         self.list_of_coordinates=[(i,j) for i in range(0,self.w,20) for j in range(0,self.h,20)]
-        self.load_assets()
-        self.create_labyrinthe()
-        self.B=adj[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)].copy()
+        self.load_assets() ## Récupération des images 
+        
+        
+        self.create_labyrinthe() ### Création de l'image du labyrinthe
+        
+        ###Création d'une copie de la liste des élements adjacents à la position du fantôme
+        self.B=adj[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)].copy() 
         self.K=adj2[(self.ghost_pos[1]//20,self.enemy_pos[0]//20)].copy()
-        self.create_coins()
-        self.create_pacr()
+        self.create_coins() ### Creation des images des  pièces à récupérer par le pacman
+        self.create_pacr() ### Création de l'image du pacman 
         self.bind_all("<Key>",self.on_key_press)
         self.bind_all("<KeyRelease>",self.on_key_release)
         self.perform_actions1()
-        self.create_enemy()
+        self.create_enemy() ##" creation du fantôme 
+        
+        ## Chemin à suivre d'un point A à un point B donné sous forme de liste(BFS)
         self.L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj)
         self.H=self.BFS((self.ghost_pos[1]//20,self.ghost_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj2)
         if self.pac_is_dead==False and self.pac_won==False:
-            self.move_randomly_or_follow()
+            self.move_randomly_or_follow() ### Faire déplacer les fantômes
             self.move_randomly_or_follow1()
         # self.draw_path()   #####FONCTION POUR TESTER LE PARCOUR DE GRAPHE
-        self.coin_eaten()
-      
-        
+        self.coin_eaten()    
         self.game_over()
         self.you_won()
     def load_assets(self):
+        
+        
+        " On récupère les images utilisées tout au long du programme"
+        
+        
         self.wall_image=Image.open("wall.png")
         self.wall_body=ImageTk.PhotoImage(self.wall_image)
         
@@ -166,6 +172,8 @@ class labyrinthe(tk.Canvas):
         self.Victory_body=ImageTk.PhotoImage(self.Victory_image)
         
     def create_labyrinthe(self):
+        ##Dans chaque point de la grille on met un carré bleu (wall) qui représente le mur
+        
         for i,j in self.list_of_coordinates:
             if (j//20<self.line) and (i//20 <self.col) :
                 if self.matrix[j//20,i//20]==0:
@@ -174,6 +182,8 @@ class labyrinthe(tk.Canvas):
             
     
     def BFS(self,depart, arrivee,adj):
+     ##Algorithme BFS pour chercher le chemin le plus court
+        
        a_explorer = [depart]
        deja_collectes = [depart]
        self.chemins = {depart: [depart]}
@@ -198,6 +208,10 @@ class labyrinthe(tk.Canvas):
         
         
     def create_pacr(self):
+        ### On met à jour l'image du pacman en fonction de la direction 
+        ### selon laquelle il se déplace
+        
+        
        if self.pac_is_dead==False and self.pac_won == False:
         if self.direction=="Right":  
             self.delete("pacman")
@@ -215,7 +229,12 @@ class labyrinthe(tk.Canvas):
             
     
     def move_pac(self):
-      if self.pac_is_dead==False and self.pac_won == False:
+        ### On fait bouger le pacman 
+        ### Sa prochaine position est déterminée selon le boutton 
+        ### sur lequel on a appuyé
+        
+        
+      if self.pac_is_dead==False and self.pac_won == False: ### Tant que le jeu n'est ni gagné ni perdu
         x_pos=self.pac_pos[0]
         y_pos=self.pac_pos[1]
         
@@ -235,35 +254,65 @@ class labyrinthe(tk.Canvas):
         self.pac_pos=(x_pos,y_pos)
         
         self.coords('pacman',self.pac_pos)
-    def on_key_release(self,event):
+    def on_key_release(self,event): 
+        ### une fois on appuie plus sur le boutton de direction
+        ### Le pacman s'arrête
         self.MOVE_INCREMENT=0
         
     def on_key_press(self,event):
-        self.MOVE_INCREMENT=20
+        ### Une fois le boutton est activé
+        self.MOVE_INCREMENT=20 ### le pacman bouge
         new_order=event.keysym
-        all_directions=["Right","Up","Left","Down"]
+        all_directions=["Right","Up","Left","Down"] ### directions permises
         if new_order in all_directions:
             self.direction=new_order
         
     def perform_actions1(self):
+        ### Au bout de 80 ms en réexecute la fonction responsable du mouvement du pacman
+        
         self.move_pac()
         self.update_timer()
         self.after(80, self.perform_actions1)
     def create_enemy(self):
+        ### Création des deux fantômes 
+        ### Leur images sont placées au positions initiales définies dans le __init__()
+        ### Au début elles prennent les valeurs "self.enemy_pos" et "self.ghost_pos"
+        
         self.create_image(*self.enemy_pos,image=self.enemy_body,tag='enemy')
         self.create_image(*self.ghost_pos,image=self.ghost_body,tag='ghost')
         
-    def move_randomly_or_follow(self):
-        # fait le chemin entre l'ennemi et le pacman
+    def move_randomly_or_follow(self):# fait le chemin entre l'ennemi et le pacman
         
+        
+        
+        ### Chemin à suivre 
+        ### Liste contenant les coordonnées à suivre par le fantôme 
+        ### le point de départ est la position du fantôme 
+        ### le point d'arrivée est la posiiton du pacman
         self.L=self.BFS((self.enemy_pos[1]//20,self.enemy_pos[0]//20),(self.pac_pos[1]//20,self.pac_pos[0]//20),adj1)
         
+        ### tant que le pacman et le fantôme n'occupent pas la même position
+        ### et tant que le jeu n'est ni perdu ni gagné
         if (len(self.L)>1 and self.pac_is_dead==False and self.pac_won==False):
-            if len(self.L)<self.radius: # si le pacman est suffisament proche l'ennemi se rapproche
+            
+            # si le pacman est suffisament proche l'ennemi se rapproche
+            if len(self.L)<self.radius:
+            
+            
+                ### Condition qui assure la continuité du chemin du fantôme 
+                ###lors de la transiiton d'un état de déplacement aléatoires 
+                ###vers un état de déplacement suivant un chemin précis
                 if len(self.L) in [self.radius-1,self.radius-2]:
+                    
+                    ### Création d'une copie indépendante du chemin à suivre 
                     self.B=adj1[(self.enemy_pos[1]//20,self.enemy_pos[0]//20)].copy()
+                    
+                ## mise à jour de la position du fantôme
                 self.enemy_pos=(self.L[1][1]*20,self.L[1][0]*20)
+                
+                ## Mise à jour de la posiiton de l'image du fantôme
                 self.coords('enemy',(self.enemy_pos[0],self.enemy_pos[1]))
+                ## suppression de la position précedente du fantôme du chemin à suivre
                 self.L.pop(0)
             else: # sinon l'ennemi bouge aléatoirement
                 self.a,self.b=random.choice(self.B)
