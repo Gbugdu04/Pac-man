@@ -67,8 +67,8 @@ adj2=copy.deepcopy(adj)
 class labyrinthe(tk.Canvas):
     def __init__(self):
         super().__init__(width=20*len(list(ascii_maze[0])),height=20*len(list(ascii_maze)),background='black',highlightthickness=0)
-        self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 16), bg="black", fg="white")
-        self.create_window(275, 305, window=self.timer_label)
+        self.timer_label = tk.Label(self, text="Time: 0", font=("Arial", 12), bg="black", fg="white")
+        self.create_window(60, 50, window=self.timer_label)
         self.start_time = time.time()
         self.col=len(list(ascii_maze[0]))
         self.line=len(list(ascii_maze))
