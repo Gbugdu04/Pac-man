@@ -366,6 +366,7 @@ class labyrinthe(tk.Canvas):
         
     def create_coins(self):
         """
+        met en place les pièces sur les chemins du labyrinthe
         """
         self.coins = {}
         for (i, j) in adj1.keys():
@@ -447,6 +448,9 @@ def open_rules():
     board2.pack()
     
 def update_timer():
+   """
+   permet de mettre a jour le timer figurant dans la fenêtre principale 
+   """
   if board.pac_is_dead==False and board.pac_won==False and board.start_game==True:
     elapsed_time = int((time.time() - start_time) // 1)
     timer_label.config(text=f"Time: {elapsed_time}")
